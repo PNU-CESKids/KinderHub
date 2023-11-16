@@ -1,0 +1,32 @@
+* 파일명을 수정하지 말고 제출해주세요. (Please submit without modifying the file name.)
+* 1, 2번은 1~10점의 점수로 응답해주세요. (Please answer questions 1 and 2 with a score of 1 to 10.)
+* 3, 4번은 느낀 점을 간단하게 서술해주세요. 없더라도 최대한 작성해보도록 노력해봅시다. (For questions 3 and 4, please briefly describe what you felt. Even if you have nothing to say, try to write it.)
+* 답변은 프로젝트 제작자에게 전달되지만, 누가 적었는지는 전달되지 않습니다. (The answer will be sent to the project creator, but not who wrote it.)
+
+
+1. 참신성 (Novelty)
+(1점: Course management system 급. 10점: 어떻게 이런 생각을 했지?)
+(1 point: It's like "Course management system". 10 points: How did you come up with this idea?)
+점수: 10
+
+
+2. 적합성 (Suitability): 
+(1점: 어떤 기능들을 구현해야 하는지 전혀 숙지하지 않은 설계. 10점: 배운 모든 기능을 고려한 설계)
+(1 point: Design without any understanding of what functions should be implemented. 10 points: Design considering all learned functions)
+점수: 8
+
+
+3. 해당 프로젝트의 뛰어난 점 (2가지 이상)  (Strong points of the project (two or more))
+답변:
+1. 다양한 기능이 상세하게 기술되어 있고 이해하기 쉬움.
+2. 데이터베이스 구조가 한눈에 보이는 데이터 베이스 다이어그램을 제공함.
+
+4. 해당 프로젝트의 아쉬운 점 (2가지 이상)  (Weak points of the project (two or more))
+답변: 
+1. 권한에 대한 설명이 부족함.
+(학생의 건강 상태와 같은 정보에 대한 접근 권한 등)
+2. userRole attribute가 VARCHAR 타입이 아닌 enum 이었으면 integrity 측면에서 유리할 것 같음.
+
+5. (Optional) 제작자에게 하고 싶은 말 / 추가적인 제안  (What you would like to say to the project creator / additional suggestions)
+답변: 프로젝트 성공적으로 마무리 하셨으면 좋겠습니다.
+

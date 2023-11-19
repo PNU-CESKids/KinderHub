@@ -14,25 +14,34 @@ def connect_to_database():
     return con, conn
 
 # 사용자 등록
-def register(con, conn, user_id, user_pw, role):
+def register(con, conn, user_name, user_pw, user_role, student_id):
     try:
-        query = "INSERT INTO Users (UserName, UserRole) VALUES (%s, %s) RETURNING UserID;"
-        conn.execute(query, (user_id, role))
+        # Check if the provided user_role is valid
+        valid_roles = ['Principal', 'Teacher', 'Student', 'Guardian', 'OtherSchoolStaff', 'StudentsFamily']
+        if user_role not in valid_roles:
+            raise ValueError(f"Invalid user_role: {user_role}. Allowed roles are {', '.join(valid_roles)}.")
+
+        # Check if the provided student_id exists in the Student table
+        query_check_student = "SELECT studentid FROM Student WHERE StudentID = %s;"
+        conn.execute(query_check_student, (student_id,))
+        if conn.fetchone() is None:
+            raise ValueError(f"Student with ID {student_id} does not exist. Please provide a valid student ID.")
+
+        # Continue with the registration if the user_role and student_id are valid
+        query_user = "INSERT INTO Users (UserName, UserRole, StudentID, UserPassword) VALUES (%s, %s, %s, %s) RETURNING UserID;"
+        conn.execute(query_user, (user_name, user_role, student_id, user_pw))
         user_id = conn.fetchone()[0]
 
-        query = "INSERT INTO Student (StudentID) VALUES (%s);"
-        conn.execute(query, (user_id,))
-
-        query = "INSERT INTO MealPlan (Date) VALUES (%s);"
-        conn.execute(query, (datetime.now().date(),))
+        query_student = "INSERT INTO Student (StudentID) VALUES (%s);"
+        conn.execute(query_student, (user_id,))
 
         con.commit()
         return f"User {user_id} registered successfully."
     except Exception as e:
         con.rollback()
         return f"Error: {e}"
-    finally:
-        con.close()
+
+
 
  # 로그인
 def log_in(con, conn, user_id, user_pw):
@@ -301,7 +310,19 @@ def main():
     con, conn = connect_to_database()
     
     try:
-        # 로그인
+        print("\n==========[Example of using the register function]==========")
+        wanna_register = input("Enter if you want to register(y/n): ")
+        if (wanna_register):
+            user_name = input("Enter username: ")
+            user_pw = input("Enter password: ")
+            user_role = input("Enter user role (Principal/Teacher/Student/Guardian/OtherSchoolStaff/StudentsFamily): ")
+            student_id = int(input("Enter student ID: "))
+
+            registration_result = register(con, conn, user_name, user_pw, user_role, student_id)
+            print(registration_result)
+
+
+        print("\n==========[Example of using the log_in function]==========")
         user_id = input("Enter your username: ")
         user_pw = input("Enter your password: ")
 

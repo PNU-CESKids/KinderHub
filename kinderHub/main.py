@@ -1,5 +1,6 @@
 import psycopg2
 from datetime import datetime
+from isemail import is_valid_email
 
 # Connect to Database
 def connect_to_database():

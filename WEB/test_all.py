@@ -40,15 +40,18 @@ def register(con, conn, user_name, user_email, user_pw, user_role, student_id):
  # 로그인
 def log_in(con, conn, user_email, user_pw):
     try:
-        query = "SELECT UserID FROM Users WHERE UserEmail = %s AND UserPassword = %s;"
-        conn.execute(query, (user_email, user_pw))
+        query = "SELECT UserID, UserPassword FROM Users WHERE UserEmail = %s;"
+        conn.execute(query, (user_email,))
         result = conn.fetchone()
-        if result and check_password_hash(result[1], user_pw) :
+
+        if result and check_password_hash(result[1], user_pw):
             return result[0]  # Return the user ID directly
         else:
             return None  # Return None if login fails
     except Exception as e:
         return None  # Handle the exception or log it, return None for simplicity
+
+
 
 
 # 로그아웃

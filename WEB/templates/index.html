@@ -4,16 +4,59 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Web App</title>
+    <title>Welcome to Kinder Hub</title>
+    <style>
+        body {
+            background-color: #FFD700; /* Set background color to yellow */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Make the body take up the full viewport height */
+            margin: 0; /* Remove default margin to center the content properly */
+            font-family: 'Arial', sans-serif; /* Change the font to Arial or any other preferred font */
+        }
+
+        h1, p, h2, ul {
+            text-align: center; /* Center-align text */
+            color: #333; /* Set text color to a dark shade for better contrast */
+        }
+
+        ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 30px;
+        }
+
+        a {
+            text-decoration: none;
+            font-weight: bold; /* Make the text bold */
+            color: #0066cc; /* Set link color */
+            background-color: #FFFFE0; /* Set a lighter yellow background color */
+            padding: 10px 20px; /* Add padding to the buttons */
+            border-radius: 5px; /* Optional: Add border-radius for rounded corners */
+}
+
+        /* Add margin to create space between the elements */
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        /* Add margin to the login/register section */
+        h2, ul {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Kinder Hub</h1>
-    <p>This is the home page. You can customize it based on your needs.</p>
-
-    <h2>로그인/회원가입</h2>
+    <h1>Kinder Hub</h1>
     <ul>
         <li><a href="{{ url_for('login') }}">Login</a></li>
-        <li><a href="{{ url_for('registering') }}">Register</li>
+
+        <li><a href="{{ url_for('registering') }}">Register</a></li>
         <!-- 다른 페이지로의 링크를 추가하세요 -->
     </ul>
 </body>

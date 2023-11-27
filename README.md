@@ -4,3 +4,4 @@
 ## Tech Stack
 - Python
 - PostgreSQL
+- Flask

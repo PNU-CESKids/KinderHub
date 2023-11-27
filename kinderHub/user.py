@@ -2,9 +2,8 @@ import psycopg2
 import re
 '''
     ToDo 
-    1. 이메일을 id로 로그인 구현하기
-    2. 회원가입시 이메일 입력 추가
-    3. Role별로 나눌 것인지 ?
+        1. 이메일을 id로 로그인 구현하기
+        2. Role별로 나눌 것인지 ?
 '''
 
 class User:
@@ -30,11 +29,11 @@ class User:
     # 로그인
     def log_in(self):
         try:
-            query = "SELECT UserID FROM Users WHERE UserName = %s AND UserPassword = %s;"
-            self.conn.execute(query, (self.username, self.user_pw))
+            query = "SELECT Username, UserID FROM Users WHERE useremail = %s AND UserPassword = %s;"
+            self.conn.execute(query, (self.email, self.user_pw))
             result = self.conn.fetchone()
             if result:
-                return f"Login successful. UserID: {result[0]}"
+                return f"Login successful. UserName: {result[0]}, UserID: {result[1]}"
             else:
                 return "Login failed. Invalid credentials."
         except Exception as e:
@@ -55,15 +54,16 @@ class User:
                 raise ValueError(f"Student with ID {self.student_id} does not exist. Please provide a valid student ID.")
 
             # Continue with the registration if the user_role and student_id are valid
-            query_user = "INSERT INTO Users (UserName, UserRole, StudentID, UserPassword) VALUES (%s, %s, %s, %s) RETURNING UserID;"
-            self.conn.execute(query_user, (self.username, self.userrole, self.student_id, self.password))
+            query_user = "INSERT INTO Users (UserName, UserRole, StudentID, UserPassword, UserEmail) VALUES (%s, %s, %s, %s, %s) RETURNING UserID;"
+            self.conn.execute(query_user, (self.username, self.userrole, self.student_id, self.password, self.useremail))
             user_id = self.conn.fetchone()[0]
+
 
             query_student = "INSERT INTO Student (StudentID) VALUES (%s);"
             self.conn.execute(query_student, (user_id,))
 
             self.con.commit()
-            return f"User {user_id} registered successfully."
+            return f"User {self.username} registered successfully User ID : {user_id}."
         except Exception as e:
             self.con.rollback()
             return f"Error: {e}"

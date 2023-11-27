@@ -1,6 +1,7 @@
 import psycopg2
+import re
 from datetime import datetime
-from user import User
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Connect to Database
 def connect_to_database():
@@ -14,54 +15,66 @@ def connect_to_database():
     conn = con.cursor()
     return con, conn
 
-'''
+# password 유효성 검사
+def validate_password(self):
+    return len(self.password) >= 4
+
 # 사용자 등록
-def register(con, conn, user_name, user_pw, user_role, student_id):
+def register(con, conn, user_name, user_email, user_pw, user_role, student_id):
+    hashed_password = generate_password_hash(user_pw, method='pbkdf2:sha256')
     try:
-        # Check if the provided user_role is valid
-        valid_roles = ['Principal', 'Teacher', 'Student', 'Guardian', 'OtherSchoolStaff', 'StudentsFamily']
-        if user_role not in valid_roles:
-            raise ValueError(f"Invalid user_role: {user_role}. Allowed roles are {', '.join(valid_roles)}.")
-
-        # Check if the provided student_id exists in the Student table
-        query_check_student = "SELECT studentid FROM Student WHERE StudentID = %s;"
-        conn.execute(query_check_student, (student_id,))
-        if conn.fetchone() is None:
-            raise ValueError(f"Student with ID {student_id} does not exist. Please provide a valid student ID.")
-
-        # Continue with the registration if the user_role and student_id are valid
-        query_user = "INSERT INTO Users (UserName, UserRole, StudentID, UserPassword) VALUES (%s, %s, %s, %s) RETURNING UserID;"
-        conn.execute(query_user, (user_name, user_role, student_id, user_pw))
+        # Insert into Users table
+        user_insert_query = "INSERT INTO Users (UserName, UserRole, StudentID, UserPassword, UserEmail) VALUES (%s, %s, %s, %s, %s) RETURNING UserID;"
+        conn.execute(user_insert_query, (user_name, user_role, student_id, hashed_password, user_email))
         user_id = conn.fetchone()[0]
-
-        query_student = "INSERT INTO Student (StudentID) VALUES (%s);"
-        conn.execute(query_student, (user_id,))
 
         con.commit()
         return f"User {user_id} registered successfully."
     except Exception as e:
         con.rollback()
         return f"Error: {e}"
-
+    finally:
+        con.close()
 
 
  # 로그인
-def log_in(con, conn, user_id, user_pw):
+def log_in(con, conn, user_email, user_pw):
     try:
-        query = "SELECT UserID FROM Users WHERE UserName = %s AND UserPassword = %s;"
-        conn.execute(query, (user_id, user_pw))
+        query = "SELECT UserID FROM Users WHERE UserEmail = %s AND UserPassword = %s;"
+        conn.execute(query, (user_email, user_pw))
         result = conn.fetchone()
-        if result:
-            return f"Login successful. UserID: {result[0]}"
+        if result and check_password_hash(result[1], user_pw) :
+            return result[0]  # Return the user ID directly
         else:
-            return "Login failed. Invalid credentials."
+            return None  # Return None if login fails
     except Exception as e:
-        return f"Error: {e}"
+        return None  # Handle the exception or log it, return None for simplicity
+
 
 # 로그아웃
 def log_out(con, conn):
     con.close()
     return "Logout successful."
+
+# user 정보 조회
+def view_user_info(conn, user_id):
+    try:
+        query = "SELECT * FROM Users WHERE UserID = %s;"
+        conn.execute(query, (user_id,))
+        result = conn.fetchone()
+        return result
+    except Exception as e:
+        return f"Error: {e}"
+
+def view_user_info(conn, user_id):
+    try:
+        query = "SELECT UserName, UserRole, studentid, useremail FROM Users WHERE UserID = %s;"
+        conn.execute(query, (user_id,))
+        result = conn.fetchone()
+        return result
+    except Exception as e:
+        return f"Error: {e}"
+
 
 # 원아 정보 조회
 def view_student_info(conn, user_id):
@@ -265,24 +278,10 @@ def delete_comment(con, conn, comment_id, user_id):
 # 식단표 등록 함수
 def register_meal(con, conn, date, meal1, meal2, snack):
     try:
-        # Check if the meal plan for the given date already exists
-        query_check = "SELECT * FROM MealPlan WHERE Date = %s;"
-        conn.execute(query_check, (date,))
-        result_check = conn.fetchone()
-
-        if result_check:
-            # If meal plan for the given date exists, update the existing record
-            query_update = "UPDATE MealPlan SET Meal1 = %s, Meal2 = %s, Snack = %s WHERE Date = %s;"
-            conn.execute(query_update, (meal1, meal2, snack, date))
-            con.commit()
-            return "Meal plan updated successfully."
-        else:
-            # If meal plan for the given date does not exist, insert a new record
-            query_insert = "INSERT INTO MealPlan (Date, Meal1, Meal2, Snack) VALUES (%s, %s, %s, %s);"
-            conn.execute(query_insert, (date, meal1, meal2, snack))
-            con.commit()
-            return "Meal plan registered successfully."
-
+        query = "UPDATE MealPlan SET Meal1 = %s, Meal2 = %s, Snack = %s WHERE Date = %s;"
+        conn.execute(query, (meal1, meal2, snack, date))
+        con.commit()
+        return "Meal plan registered successfully."
     except Exception as e:
         con.rollback()
         return f"Error: {e}"
@@ -307,40 +306,19 @@ def view_other_days_meal(con, conn, date):
         return result
     except Exception as e:
         return f"Error: {e}"
-'''
 
 def main():
     con, conn = connect_to_database()
     
     try:
-
-
-        print("\n==========[Example of using the register function]==========")
-        wanna_register = input("Enter if you want to register(y/n): ")
-        if (wanna_register == "y"):
-            user_name = input("Enter username: ")
-            user_pw = input("Enter password: ")
-            user_role = input("Enter user role (Principal/Teacher/Student/Guardian/OtherSchoolStaff/StudentsFamily): ")
-            student_id = int(input("Enter student ID: "))
-            user_email = input("Enter email: ")
-
-            new_user = User(con, conn, user_name, user_pw, user_email, user_role, student_id)
-            registration_result = new_user.register()
-
-            print(registration_result)
-
-
-
-        print("\n==========[Example of using the log_in function]==========")
-        user_email = input("Enter your email: ")
+        # 로그인
+        user_id = input("Enter your username: ")
         user_pw = input("Enter your password: ")
 
-        user = User(con, conn, None, user_pw, user_email, None, None)
+        logged_in_user_id = log_in(con, conn, user_id, user_pw)
+        print(logged_in_user_id)
 
-        logged_in_user_info = user.log_in()
-        print(logged_in_user_info)
-
-        if logged_in_user_info.startswith("Login successful"):
+        if logged_in_user_id.startswith("Login successful"):
             '''
             print("\n==========[Example of using the view_student_info function]==========")
             student_info = view_student_info(conn, int(logged_in_user_id.split(": ")[1]))
@@ -389,11 +367,11 @@ def main():
             #(con, title, content, poster_id, image=None)
             post_result = post_free_board(con,  title, content, int(logged_in_user_id.split(": ")[1]), image)
             print(post_result)
-            
+
             print("\n==========[Example of using the write_post_comment function]==========")
             post_id = int(input("Enter Post ID for comment: "))
+            commenter_id = int(input("Enter commenter ID: "))
             comment_content = input("Enter comment content: ")
-            commenter_id = int(input("Enter Your ID: "))
             comment_result = write_post_comment(con, conn, post_id, commenter_id, comment_content)
             print(comment_result)
 
@@ -436,11 +414,11 @@ def main():
             view_other_days_meal_result = view_other_days_meal(con, conn, view_other_date)
             print("Meal for the specified date:")
             print(view_other_days_meal_result)
-        
+            '''
         # 로그아웃
         log_out(con, conn)
         print("Logout successful.")
-        '''
+
     finally:
         # Close cursor and connection if they are still open
         if conn is not None and not conn.closed:
@@ -450,3 +428,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+    

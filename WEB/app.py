@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import psycopg2
+import re
 from test_all import *
 
 app = Flask(__name__)
 
 # Configure your database connection here
-DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/termkk"
+DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/term"
+
 
 @app.route('/')
 def index():
@@ -49,9 +51,57 @@ def dashboard():
     return redirect(url_for('login'))
     
 # app.py 파일에서
+# 게시판 글쓰기
+@app.route('/free_board/new', methods=['GET', 'POST'])
+def post_free_board():
+    if 'user_id' in session:
+        if request.method == 'POST':
+            title = request.form['title']
+            content = request.form['content']
+            user_id = session['user_id']
+            image = request.files['image'] if 'image' in request.files else None
+
+            con, conn = connect_to_database()
+
+            try:
+                # Fetch the user_name based on user_id
+                user_name = get_user_name_by_id(con, user_id)
+
+                # Create the post with the fetched user_name
+                post_id = post_free_board(con, title, content, user_name, image.read() if image else None)
+
+                return redirect(url_for('view_board', post_id=post_id))
+
+            except Exception as e:
+                print(f"Error: Unable to create post\n{e}")
+
+            finally:
+                close(con)
+
+        return render_template('new_free_board.html')
+
+    return redirect(url_for('login'))
+
+
+# 게시판 조회
 @app.route('/board')
-def board():
-    return render_template('board.html')
+def view_board():
+    con, conn = connect_to_database()
+
+    posts = view_free_board(conn)  # Pass conn to view_free_board
+
+    return render_template('board.html', posts=posts)
+
+
+# 게시물 상세보기
+@app.route('/post/<int:post_id>')
+def view_post_route(post_id):
+    con, conn = connect_to_database()
+
+    post_data = view_post(con, conn, post_id)
+
+    return render_template('post_detail.html', post_data=post_data)
+
 
 @app.route('/meals')
 def meals():
@@ -66,7 +116,9 @@ def notification():
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
+
+
 
 @app.route('/registering', methods=['GET', 'POST'])
 def registering():
@@ -110,7 +162,6 @@ def registering():
 
     # If it's a GET request, simply render the template
     return render_template('registering.html')
-
 
 if __name__ == '__main__':
     app.secret_key = 'your_secret_key'

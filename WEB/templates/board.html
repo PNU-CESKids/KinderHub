@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Free Board</title>
 </head>
 <body>
-   <h1>board.html</h1> 
+    <h1>Free Board</h1>
+    {% for post in posts %}
+        <p><strong>PostID:</strong> {{ post[0] }}</p>
+        <p><strong>Title:</strong> <a href="{{ url_for('view_post_route', post_id=post[0]) }}">{{ post[1] }}</a></p>
+    {% endfor %}
+
+    <!-- Add the button for creating a new post -->
+    <a href="{{ url_for('post_free_board') }}"><button>Create New Post</button></a>
 </body>
 </html>
+

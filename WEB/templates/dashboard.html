@@ -8,14 +8,15 @@
     <title>대시보드</title>
 </head>
 <body>
+    <h1>MENU</h1>
     <h2>{{ user_name }}님 환영합니다!</h2>
     <h5>역할 : {{ user_role }}</h5>
-    <h1>MENU</h1>
     <!-- Add your dashboard content here -->
+
     <br>
 
     <!-- Add links to other menus -->
-    <a href="{{ url_for('board') }}">게시판</a>
+    <a href="{{ url_for('view_board') }}">게시판</a>
     <br>
     <a href="{{ url_for('meals') }}">식단표 보기</a>
     <br>

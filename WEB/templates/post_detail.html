@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Detail</title>
+</head>
+<body>
+    <h1>Post Detail</h1>
+    {% if 'error' in post_data %}
+        <p>Error: {{ post_data['error'] }}</p>
+    {% else %}
+        <p><strong>Title:</strong> {{ post_data['post_info'][0] }}</p>
+        <p><strong>Content:</strong> {{ post_data['post_info'][1] }}</p>
+        <p><strong>Timestamp:</strong> {{ post_data['post_info'][2] }}</p>
+        <p><strong>Image:</strong>
+            {% if post_data['post_info'][3] is not none %}
+                <img src="data:image/jpeg;base64,{{ post_data['post_info'][3].decode('utf-8') }}" alt="Post Image">
+            {% else %}
+                <!-- Provide a default image or some indication that the image is not available -->
+                <img src="/static/default_image.jpg" alt="Default Image">
+            {% endif %}
+        </p>
+
+        <h2>Comments</h2>
+        {% for comment in post_data['comments'] %}
+            <p>
+                <strong>Commenter ID:</strong> {{ comment[2] }}<br>
+                <strong>User Email:</strong> {{ comment[5] }}<br>
+                <strong>Comment Content:</strong> {{ comment[3] }}<br>
+            </p>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

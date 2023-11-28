@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Connect to Database
 def connect_to_database():
     con = psycopg2.connect(
-        database='termkk',
+        database='term',
         user='db2023',
         password='db!2023',
         host='::1',
@@ -14,6 +14,15 @@ def connect_to_database():
     )
     conn = con.cursor()
     return con, conn
+
+# Add this function definition in your code
+def close(connection):
+    try:
+        if connection:
+            connection.close()
+    except Exception as e:
+        print(f"Error closing connection: {e}")
+
 
 # password 유효성 검사
 def validate_password(self):
@@ -197,6 +206,46 @@ def post_free_board (con, title, content, poster_id, image=None):
     finally:
         close(con)
 
+def get_comments_by_postid(postid):
+    con, conn = connect_to_database()
+    try:
+        query = """
+            SELECT 
+                comment.commentid,
+                comment.postid,
+                comment.commenterid,
+                comment.commentcontent,
+                comment.timestamp,
+                users.useremail
+            FROM 
+                comment
+            JOIN 
+                users ON comment.commenterid = users.userid
+            WHERE 
+                comment.postid = %s;
+        """
+        conn.execute(query, (postid,))
+        result_set = conn.fetchall()
+        return result_set
+    finally:
+        conn.close()
+        con.close()
+
+def view_post(con, conn, post_id):
+    try:
+        # Fetch post information
+        query = "SELECT Title, Content, TimeStamp, Image FROM FreeBoardQA WHERE PostID = %s;"
+        conn.execute(query, (post_id,))
+        post_info = conn.fetchone()
+
+        # Fetch comments for the post using get_comments_by_post_id
+        comments = get_comments_by_postid(post_id)
+
+        return {"post_info": post_info, "comments": comments}
+    except Exception as e:
+        return {"error": f"Error: {e}"}
+
+
 # 게시판 글에 댓글 등록 함수
 def write_post_comment(con, conn, post_id, commenter_id, comment_content):
     try:
@@ -209,7 +258,7 @@ def write_post_comment(con, conn, post_id, commenter_id, comment_content):
         return f"Error: {e}"
 
 # 자유게시판 보기 함수
-def view_free_board(con, conn):
+def view_free_board(conn):
     try:
         query = "SELECT PostID, Title FROM FreeBoardQA;"
         conn.execute(query)
@@ -218,20 +267,20 @@ def view_free_board(con, conn):
     except Exception as e:
         return f"Error: {e}"
 
-# 자유게시판 글 보기 함수
-def view_post(con, conn, post_id):
-    try:
-        query = "SELECT Title, Content, TimeStamp, Image FROM FreeBoardQA WHERE PostID = %s;"
-        conn.execute(query, (post_id,))
-        post_info = conn.fetchone()
+# # 자유게시판 글 보기 함수
+# def view_post(con, conn, post_id):
+#     try:
+#         query = "SELECT Title, Content, TimeStamp, Image FROM FreeBoardQA WHERE PostID = %s;"
+#         conn.execute(query, (post_id,))
+#         post_info = conn.fetchone()
 
-        query = "SELECT CommentContent FROM Comment WHERE PostID = %s;"
-        conn.execute(query, (post_id,))
-        comments = conn.fetchall()
+#         query = "SELECT CommentContent FROM Comment WHERE PostID = %s;"
+#         conn.execute(query, (post_id,))
+#         comments = conn.fetchall()
 
-        return {"post_info": post_info, "comments": comments}
-    except Exception as e:
-        return f"Error: {e}"
+#         return {"post_info": post_info, "comments": comments}
+#     except Exception as e:
+#         return f"Error: {e}"
 
 # 자유게시판 글 삭제 함수
 def delete_post_free_board(con, conn, post_id, user_id):

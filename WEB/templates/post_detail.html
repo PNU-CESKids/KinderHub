@@ -1,35 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post Detail</title>
+    <style>
+        /* Add this CSS style in the <head> section of your HTML or in a separate CSS file */
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #f5f5f5;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #3498db;
+            font-size: 32px;
+        }
+
+        p {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            font-size: 18px;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            background-color: #2ecc71;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #27ae60;
+        }
+
+        /* Add more styles as needed */
+    </style>
 </head>
+
 <body>
     <h1>Post Detail</h1>
     {% if 'error' in post_data %}
-        <p>Error: {{ post_data['error'] }}</p>
+    <p>Error: {{ post_data['error'] }}</p>
     {% else %}
-        <p><strong>Title:</strong> {{ post_data['post_info'][0] }}</p>
-        <p><strong>Content:</strong> {{ post_data['post_info'][1] }}</p>
-        <p><strong>Timestamp:</strong> {{ post_data['post_info'][2] }}</p>
-        <p><strong>Image:</strong>
-            {% if post_data['post_info'][3] is not none %}
-                <img src="data:image/jpeg;base64,{{ post_data['post_info'][3].decode('utf-8') }}" alt="Post Image">
-            {% else %}
-                <!-- Provide a default image or some indication that the image is not available -->
-                <img src="/static/default_image.jpg" alt="Default Image">
-            {% endif %}
-        </p>
+    <p><strong>Title:</strong> {{ post_data['post_info'][0] }}</p>
+    <p><strong>Content:</strong> {{ post_data['post_info'][1] }}</p>
+    <p><strong>Timestamp:</strong> {{ post_data['post_info'][2] }}</p>
+    <p><strong>Image:</strong>
+        {% if post_data['post_info'][3] is not none %}
+        <!-- Update this line in your post_detail.html -->
+        <!-- Update this line in your post_detail.html -->
+        <img src="data:image/jpeg;base64,{{ post_data['post_info'][3].tobytes().b64encode() }}" alt="Post Image">
+        {% else %}
+        <!-- Provide a default image or some indication that the image is not available -->
+        <img src="/static/default_image.jpg" alt="Default Image">
+        {% endif %}
+    </p>
+    <p><strong>UserEmail:</strong> {{ post_data['post_info'][5] }}</p>
 
-        <h2>Comments</h2>
-        {% for comment in post_data['comments'] %}
-            <p>
-                <strong>Commenter ID:</strong> {{ comment[2] }}<br>
-                <strong>User Email:</strong> {{ comment[5] }}<br>
-                <strong>Comment Content:</strong> {{ comment[3] }}<br>
-            </p>
-        {% endfor %}
+    <h2>Comments</h2>
+    <form method="post" enctype="multipart/form-data">
+        <label for="commentcontent">your comment : </label>
+        <input type="text" id="commentcontent" name="commentcontent" required><br>
+
+        <input type="submit" value="댓글 입력">
+    </form>
+    {% for comment in post_data['comments'] %}
+    <p>
+        <strong>Commenter ID:</strong> {{ comment[2] }}<br>
+        <strong>User Email:</strong> {{ comment[5] }}<br>
+        <strong>Comment Content:</strong> {{ comment[3] }}<br>
+    </p>
+    {% endfor %}
     {% endif %}
 </body>
+
 </html>

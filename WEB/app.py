@@ -5,6 +5,7 @@ from test_all import *
 
 app = Flask(__name__)
 
+
 # Configure your database connection here
 DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/term"
 
@@ -22,6 +23,7 @@ def login():
         logged_in_user_id = log_in(con, conn, user_email, user_pw)
         if logged_in_user_id is not None:
             session['user_id'] = logged_in_user_id
+           # user = User(logged_in_user_id['user_id'], logged_in_user_id['username'])
             return redirect(url_for('dashboard'))
         else:
             error_message = "Invalid credentials. Please try again."
@@ -53,7 +55,7 @@ def dashboard():
 # app.py 파일에서
 # 게시판 글쓰기
 @app.route('/free_board/new', methods=['GET', 'POST'])
-def post_free_board():
+def post_board():
     if 'user_id' in session:
         if request.method == 'POST':
             title = request.form['title']
@@ -64,11 +66,13 @@ def post_free_board():
             con, conn = connect_to_database()
 
             try:
-                # Fetch the user_name based on user_id
-                user_name = get_user_name_by_id(con, user_id)
+                 # Save image to disk if available
+                image_path = save_image_to_disk(image) if image else None
 
-                # Create the post with the fetched user_name
-                post_id = post_free_board(con, title, content, user_name, image.read() if image else None)
+                post_id = post_free_board(con, title, content, user_id, image_path)
+
+                # Commit changes to the database
+                conn.commit()
 
                 return redirect(url_for('view_board', post_id=post_id))
 
@@ -82,7 +86,6 @@ def post_free_board():
 
     return redirect(url_for('login'))
 
-
 # 게시판 조회
 @app.route('/board')
 def view_board():
@@ -94,10 +97,23 @@ def view_board():
 
 
 # 게시물 상세보기
-@app.route('/post/<int:post_id>')
+# Route for viewing a specific post and adding comments
+@app.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def view_post_route(post_id):
     con, conn = connect_to_database()
+    if 'user_id' in session:
+        user_id = session['user_id']
 
+    if request.method == 'POST':
+        commenter_id = user_id 
+        comment_content = request.form['commentcontent']
+
+        result = write_post_comment(con, conn, post_id, commenter_id, comment_content)
+
+        # Redirect to the same post after adding a comment
+        return redirect(url_for('view_post_route', post_id=post_id))
+
+    # If it's a GET request, simply display the post details and comments
     post_data = view_post(con, conn, post_id)
 
     return render_template('post_detail.html', post_data=post_data)

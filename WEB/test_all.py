@@ -1,6 +1,7 @@
 import psycopg2
 import re
 from datetime import datetime
+
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Connect to Database
@@ -61,12 +62,11 @@ def log_in(con, conn, user_email, user_pw):
         return None  # Handle the exception or log it, return None for simplicity
 
 
-
-
 # 로그아웃
 def log_out(con, conn):
     con.close()
     return "Logout successful."
+
 
 # user 정보 조회
 def view_user_info(conn, user_id):
@@ -77,6 +77,15 @@ def view_user_info(conn, user_id):
         return result
     except Exception as e:
         return f"Error: {e}"
+
+# user id로 username 찾기
+def get_user_name_by_id(con, user_id):
+    con.execute("SELECT username FROM users WHERE userid = %s", (user_id,))
+    result = con.fetchone()
+    if result:
+        return result[0]
+    return None
+
 
 def view_user_info(conn, user_id):
     try:
@@ -189,8 +198,7 @@ def guardian_select(con, conn, user_id, guardian_id):
         return f"Error: {e}"
 
 # 자유게시판 글 등록
-
-def post_free_board (con, title, content, poster_id, image=None):
+def post_free_board(con, title, content, poster_id, image):
     try:
         with con, con.cursor() as cursor:
             cursor.execute("""
@@ -204,7 +212,8 @@ def post_free_board (con, title, content, poster_id, image=None):
     except Exception as e:
         print(f"Error: Unable to create post\n{e}")
     finally:
-        close(con)
+        con.close()  # Close the connection here
+
 
 def get_comments_by_postid(postid):
     con, conn = connect_to_database()
@@ -234,7 +243,22 @@ def get_comments_by_postid(postid):
 def view_post(con, conn, post_id):
     try:
         # Fetch post information
-        query = "SELECT Title, Content, TimeStamp, Image FROM FreeBoardQA WHERE PostID = %s;"
+        query = """
+        SELECT
+            freeboardqa.title,
+            freeboardqa.content,
+            freeboardqa.timestamp,
+            freeboardqa.image,
+            freeboardqa.posterid,
+            users.useremail
+        FROM
+            freeboardqa
+        JOIN
+            users ON freeboardqa.posterid = users.userid
+        WHERE
+            freeboardqa.postid = %s;
+        """
+
         conn.execute(query, (post_id,))
         post_info = conn.fetchone()
 

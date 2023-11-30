@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Connect to Database
 def connect_to_database():
     con = psycopg2.connect(
-        database='term',
+        database='termkk',
         user='db2023',
         password='db!2023',
         host='::1',
@@ -354,8 +354,8 @@ def delete_comment(con, conn, comment_id, user_id):
 # 식단표 등록 함수
 def register_meal(con, conn, date, meal1, meal2, snack):
     try:
-        query = "UPDATE MealPlan SET Meal1 = %s, Meal2 = %s, Snack = %s WHERE Date = %s;"
-        conn.execute(query, (meal1, meal2, snack, date))
+        query = "INSERT INTO MealPlan (Date, Meal1, Meal2, Snack) VALUES (%s, %s, %s, %s);"
+        conn.execute(query, (date, meal1, meal2, snack))
         con.commit()
         return "Meal plan registered successfully."
     except Exception as e:
@@ -378,10 +378,12 @@ def view_other_days_meal(con, conn, date):
     try:
         query = "SELECT Meal1, Meal2, Snack FROM MealPlan WHERE Date = %s;"
         conn.execute(query, (date,))
-        result = conn.fetchone()
+        result = conn.fetchall()  # Use fetchall instead of fetchone
         return result
     except Exception as e:
         return f"Error: {e}"
+
+
 
 def main():
     con, conn = connect_to_database()

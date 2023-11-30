@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 # Configure your database connection here
-DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/term"
+DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/termkk"
 
 
 @app.route('/')
@@ -119,9 +119,45 @@ def view_post_route(post_id):
     return render_template('post_detail.html', post_data=post_data)
 
 
-@app.route('/meals')
+@app.route('/meals', methods=['GET', 'POST'])
 def meals():
-    return render_template('meal.html')
+    con, conn = connect_to_database()
+
+    try:
+        today_meal = None  # Define today_meal here
+
+        if request.method == 'POST':
+            action = request.form['action']
+
+            if action == 'view':
+                meal_date = request.form['meal_date']
+                today_meal = view_todays_meal(con, conn)
+                other_days_meal = view_other_days_meal(con, conn, meal_date)
+                return render_template('meal.html', today_meal=today_meal, other_days_meal=other_days_meal)
+
+            elif action == 'register':
+                today_meal = view_todays_meal(con, conn)
+                register_date = request.form['register_date']
+                meal1 = request.form['meal1']
+                meal2 = request.form['meal2']
+                snack = request.form['snack']
+                
+                # 해당 날짜에 식단이 이미 등록되었을 경우:
+                
+                # 해당 날짜에 식단이 없을 경우:
+                register_meal(con, conn, register_date, meal1, meal2, snack)
+                return render_template('meal.html', today_meal=today_meal)
+
+        else:
+            today_meal = view_todays_meal(con, conn)
+            return render_template('meal.html', today_meal=today_meal)
+
+    except Exception as e:
+        return render_template('error.html', error_message=f"Error: {e}")
+
+    finally:
+        close(con)
+
 
 # notification
 @app.route('/notification')

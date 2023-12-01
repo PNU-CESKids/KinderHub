@@ -4,48 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MealPlan</title>
+    <style>
+        body {
+            background-color: #f8f8f8;
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1, h2 {
+            color: #3e3e3e;
+            padding: 5px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        .section {
+            flex: 1;
+            margin: 20px;
+            padding: 10px;
+            border: 5px solid #c0b9a5;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #c0b9a5;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #c0b9a5;
+        }
+    </style>
 </head>
 <body>
     <h1>MealPlan</h1>
     
-    {% if today_meal %}
-        <h2>Today's Meal</h2>
-        <p>Meal 1: {{ today_meal[0] }}</p>
-        <p>Meal 2: {{ today_meal[1] }}</p>
-        <p>Snack: {{ today_meal[2] }}</p>
-    {% else %}
-        <p>No meal information available for today.</p>
-    {% endif %}
+    <div class="container">
+        <div class="section">
+            {% if today_meal %}
+                <h2>Today's Meal</h2>
+                <p>Meal 1: {{ today_meal[0] }}</p>
+                <p>Meal 2: {{ today_meal[1] }}</p>
+                <p>Snack: {{ today_meal[2] }}</p>
+            {% else %}
+                <p>No meal information available for today.</p>
+            {% endif %}
+        </div>
 
-    <h2>View Meals for Other Dates</h2>
-    <form method="post" action="{{ url_for('meals') }}">
-        <label for="meal_date">Enter Date (YYYY-MM-DD): </label>
-        <input type="text" id="meal_date" name="meal_date" required>
-        <button type="submit" name="action" value="view">View Meal</button>
-    </form>
+        <div class="section">
+            <h2>View Meals for Other Dates</h2>
+            <form method="post" action="{{ url_for('meals') }}">
+                <label for="meal_date">Enter Date (YYYY-MM-DD): </label>
+                <input type="text" id="meal_date" name="meal_date" required>
+                <button type="submit" name="action" value="view">View Meal</button>
+            </form>
 
-    {% if other_days_meal %}
-        <h2>Meals for {{ meal_date }}</h2>
-        {% for meal in other_days_meal %}
-            <p>Meal 1: {{ meal[0] }}</p>
-            <p>Meal 2: {{ meal[1] }}</p>
-            <p>Snack: {{ meal[2] }}</p>
-        {% endfor %}
-    {% else %}
-        <p>No meal information available for the selected date.</p>
-    {% endif %}
+            {% if other_days_meal %}
+                <h2>Meals for {{ meal_date }}</h2>
+                {% for meal in other_days_meal %}
+                    <p>Meal 1: {{ meal[0] }}</p>
+                    <p>Meal 2: {{ meal[1] }}</p>
+                    <p>Snack: {{ meal[2] }}</p>
+                {% endfor %}
+            {% else %}
+                <p>No meal information available for the selected date.</p>
+            {% endif %}
+        </div>
 
-    <h2>Register Meal for Other Dates</h2>
-    <form method="post" action="{{ url_for('meals') }}">
-        <label for="register_date">Select Date to Register (YYYY-MM-DD): </label>
-        <input type="text" id="register_date" name="register_date" required>
-        <label for="meal1">Meal 1: </label>
-        <input type="text" id="meal1" name="meal1" required>
-        <label for="meal2">Meal 2: </label>
-        <input type="text" id="meal2" name="meal2" required>
-        <label for="snack">Snack: </label>
-        <input type="text" id="snack" name="snack" required>
-        <button type="submit" name="action" value="register">Register Meal</button>
-    </form>
+        <div class="section">
+            <h2>Register Meal for Other Dates</h2>
+            <form method="post" action="{{ url_for('meals') }}">
+                <label for="register_date">Select Date to Register (YYYY-MM-DD): </label>
+                <input type="text" id="register_date" name="register_date" required>
+                <label for="meal1">Meal 1: </label>
+                <input type="text" id="meal1" name="meal1" required>
+                <label for="meal2">Meal 2: </label>
+                <input type="text" id="meal2" name="meal2" required>
+                <label for="snack">Snack: </label>
+                <input type="text" id="snack" name="snack" required>
+                <button type="submit" name="action" value="register">Register Meal</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

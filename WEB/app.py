@@ -143,6 +143,7 @@ def meals():
                 snack = request.form['snack']
                 
                 # 해당 날짜에 식단이 이미 등록되었을 경우:
+                # meal 수정
                 
                 # 해당 날짜에 식단이 없을 경우:
                 register_meal(con, conn, register_date, meal1, meal2, snack)

@@ -165,6 +165,9 @@ def meals():
 def notification():
     return render_template('notification.html')
 
+@app.route('/schedule')
+def schedule():
+    return render_template('schedule.html')
 
 @app.route('/logout')
 def logout():

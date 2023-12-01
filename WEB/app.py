@@ -5,7 +5,6 @@ from test_all import *
 
 app = Flask(__name__)
 
-
 # Configure your database connection here
 DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/termkk"
 
@@ -168,6 +167,10 @@ def notification():
 @app.route('/schedule')
 def schedule():
     return render_template('schedule.html')
+
+@app.route('/guardianselection')
+def guardianselection():
+    return render_template('guardianselection.html')
 
 @app.route('/logout')
 def logout():

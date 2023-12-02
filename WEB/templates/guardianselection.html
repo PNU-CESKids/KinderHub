@@ -66,21 +66,23 @@
 </head>
 <body>
     <h1>Guardian Selection Service</h1>
+    <p>{{ message }}</p>
 
     <div class="container">
         <div class="section">
             <!-- Read Guardian -->
             <!-- Visible) userrole == StudentFamily or Student or Guardian -->
-            <h2>Today's Guardian</h2>
-            {% if user_info %}
-            <p><strong>User ID : </strong>{{ user_id }}</p>
-            <p><strong>Role : </strong>{{ user_role }}</p>
-            {% endif %}
+            <h2>하원 주체</h2>
+            <h4>[원아]</h4>
             {% if student_info %}
-            <p><strong>Student ID : </strong>{{ student_id }}</p>
-            <p><strong>Student Name : </strong>{{ student_name }}</p>
+                <p><strong>Student ID : </strong>{{ student_id }}</p>
+                <p><strong>Student Name : </strong>{{ student_name }}</p>
             {% endif %}
-
+            <h4>[지정 하원 주체]</h4>
+            {% if guardian_id %}
+                <p><strong>Guardian ID : </strong>{{ guardian_id }}</p>
+                <p><strong>Guardian Name : </strong>{{ guardian_name }}</p>
+            {% endif %}
             <p><!-- Display relevant guardian information here --></p>
         </div>
 

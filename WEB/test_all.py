@@ -175,8 +175,9 @@ def view_schedule(con, conn, date=None):
     except Exception as e:
         return f"Error: {e}"
 
-# 하원 주체 선택
+# 하원 주체 선택 권한 부여
 def grant_guardian_selection_permissions(con, conn, user_role):
+    con, conn = connect_to_database()
     try:
         read_permission = 'O'
         write_permission = 'O' if user_role in ['Guardian'] else 'X'
@@ -193,11 +194,33 @@ def grant_guardian_selection_permissions(con, conn, user_role):
     finally:
         con.close()
 
+# 하원 주체 보기
+def view_guardian(con, conn, student_id):
+    con, conn = connect_to_database()
+    try:
+        query = """
+            SELECT gs.guardianid, u.username
+            FROM guardianselection gs
+            JOIN users u ON gs.guardianid = u.userid
+            WHERE gs.studentid = %s;
+        """
+        conn.execute(query, (student_id,))
+        result = conn.fetchall()
+        return result
+    except Exception as e:
+        con.rollback()
+        return f"Error: {e}"
+    finally:
+        con.close()
+
+
+# 하원 주체 선택
 def guardian_select(con, conn, user_id, student_id):
+    con, conn = connect_to_database()
     try:
         # GuardianSelection에 데이터 추가
         query = "INSERT INTO GuardianSelection (GuardianID, StudentID) VALUES (%s, %s);"
-        conn.execute(query, (guardian_id, student_id))
+        conn.execute(query, (user_id, student_id))
         con.commit()
         return "Guardian selection successful."
     except Exception as e:

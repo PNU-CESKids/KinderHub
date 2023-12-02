@@ -190,6 +190,10 @@ def guardianselection():
 
             student_name = student_info[0]
 
+            guardian = view_guardian(con, conn, student_id)
+            if guardian:
+                guardian_id, guardian_name = guardian[0]
+
             # Grant permissions based on user role
             grant_guardian_selection_permissions(con, conn, user_role)
 
@@ -198,19 +202,19 @@ def guardianselection():
                 # If the user is a guardian, perform the necessary actions for guardian selection
                 guardian_select_result = guardian_select(con, conn, int(user_id), student_id)
                 if guardian_select_result.startswith("Guardian selection successful"):
-                    return render_template('guardianselection.html', user_id=user_id, user_role=user_role,
+                    return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name,
                                            student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
-                                           success_message="Guardian selection successful.")
+                                           message="Guardian selection successful.")
                 else:
-                    return render_template('guardianselection.html', user_id=user_id, user_role=user_role,
+                    return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
                                            student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
-                                           error_message=f"Error: {guardian_select_result}")
+                                           message=f"Error: {guardian_select_result}")
 
             else:
                 # Handle the case when the user role is not a guardian
-                return render_template('guardianselection.html', user_id=user_id, user_role=user_role,
+                return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
                                        student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
-                                       error_message="Unauthorized. Only guardians can perform guardian selection.")
+                                       message="Unauthorized. Only guardians can perform guardian selection.")
 
         except Exception as e:
             return render_template('error.html', error_message=f"Error: {e}")

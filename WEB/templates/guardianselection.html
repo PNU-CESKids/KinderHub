@@ -73,9 +73,14 @@
             <!-- Visible) userrole == StudentFamily or Student or Guardian -->
             <h2>Today's Guardian</h2>
             {% if user_info %}
-            <p>{{ student_id }}</p>
-            <p>{{ student_name }}</p>
+            <p><strong>User ID : </strong>{{ user_id }}</p>
+            <p><strong>Role : </strong>{{ user_role }}</p>
             {% endif %}
+            {% if student_info %}
+            <p><strong>Student ID : </strong>{{ student_id }}</p>
+            <p><strong>Student Name : </strong>{{ student_name }}</p>
+            {% endif %}
+
             <p><!-- Display relevant guardian information here --></p>
         </div>
 

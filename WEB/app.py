@@ -199,17 +199,17 @@ def guardianselection():
                 guardian_select_result = guardian_select(con, conn, int(user_id), student_id)
                 if guardian_select_result.startswith("Guardian selection successful"):
                     return render_template('guardianselection.html', user_id=user_id, user_role=user_role,
-                                           student_id=student_id, student_name=student_name,
+                                           student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
                                            success_message="Guardian selection successful.")
                 else:
                     return render_template('guardianselection.html', user_id=user_id, user_role=user_role,
-                                           student_id=student_id, student_name=student_name,
+                                           student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
                                            error_message=f"Error: {guardian_select_result}")
 
             else:
                 # Handle the case when the user role is not a guardian
                 return render_template('guardianselection.html', user_id=user_id, user_role=user_role,
-                                       student_id=student_id, student_name=student_name,
+                                       student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
                                        error_message="Unauthorized. Only guardians can perform guardian selection.")
 
         except Exception as e:

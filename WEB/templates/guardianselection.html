@@ -69,37 +69,32 @@
     <p>{{ message }}</p>
 
     <div class="container">
-        <div class="section">
-            <!-- Read Guardian -->
-            <!-- Visible) userrole == StudentFamily or Student or Guardian -->
-            <h2>하원 주체</h2>
-            <h4>[원아]</h4>
+        <div class="section" {% if user_role not in ['StudentsFamily', 'Student', 'Guardian'] %} style="display: none;"{% endif %}>
+            <h2>지정 하원 주체</h2>
             {% if student_info %}
-                <p><strong>Student ID : </strong>{{ student_id }}</p>
-                <p><strong>Student Name : </strong>{{ student_name }}</p>
+                {% if guardian_id %}
+                    <h4>{{ student_name }}의 지정된 하원 주체 : {{ guardian_name }}</h4>
+                {% endif %}
             {% endif %}
-            <h4>[지정 하원 주체]</h4>
-            {% if guardian_id %}
-                <p><strong>Guardian ID : </strong>{{ guardian_id }}</p>
-                <p><strong>Guardian Name : </strong>{{ guardian_name }}</p>
-            {% endif %}
-            <p><!-- Display relevant guardian information here --></p>
         </div>
 
-        <div class="section">
-            <!-- Read Guardian for All Students-->
-            <!-- Visible) userrole == Teacher or Principal or OtherSchoolStaff -->
+        <div class="section" {% if user_role not in ['Teacher', 'Principal', 'OtherSchoolStaff'] %} style="display: none;"{% endif %}>
             <h2>Guardian Information for All Students</h2>
-            <p><!-- Display relevant information for all students --></p>
+            <ul>
+            {% for student_info in all_students_info %}
+                <li>
+                    <strong>Student ID:</strong> {{ student_info[0] }} |
+                    <strong>Student Name:</strong> {{ student_info[1] }} |
+                    <strong>Guardian ID:</strong> {{ student_info[2] }} |
+                    <strong>Guardian Name:</strong> {{ student_info[3] }}
+                </li>
+            {% endfor %}
+            </ul>
         </div>
 
-        <div class="section">
-            <!-- Write Guardian -->
-            <!-- Visible) userrole == Guardian -->
+        <div class="section"{% if user_role not in ['Guardian'] %} style="display: none;"{% endif %}>
             <h2>Guardian Selection</h2>
             <form action="/guardianselection" method="post">
-                <!-- Add form elements for Guardian Selection here -->
-                <!-- Example: Select Today's Guardian, input: Guardian -->
                 <label for="todayGuardian">Select Today's Guardian:</label>
                 <input type="text" id="todayGuardian" name="todayGuardian" required>
                 <button type="submit">Submit Guardian Selection</button>

@@ -102,7 +102,7 @@ def view_student_info(conn, user_id):
         query = "SELECT studentname FROM Student WHERE StudentID = (SELECT StudentID FROM Users WHERE UserID = %s);"
         conn.execute(query, (user_id,))
         result = conn.fetchone()
-        return result[0]
+        return result
     except Exception as e:
         return f"Error: {e}"
 
@@ -215,14 +215,49 @@ def view_guardian(con, conn, student_id):
 
 
 # 하원 주체 선택
-def guardian_select(con, conn, user_id, student_id):
+def guardian_select(con, conn, user_id, student_id, selected_guardian):
     con, conn = connect_to_database()
     try:
-        # GuardianSelection에 데이터 추가
-        query = "INSERT INTO GuardianSelection (GuardianID, StudentID) VALUES (%s, %s);"
-        conn.execute(query, (user_id, student_id))
+        check_query = "SELECT selectionid FROM GuardianSelection WHERE studentid = %s;"
+        conn.execute(check_query, (student_id, ))
+        existing_entry = conn.fetchone()
+
+        if existing_entry:
+            update_query = "UPDATE GuardianSelection SET guardianid = %s;"
+            conn.execute(update_query, (selected_guardian, ))
+        else:
+            insert_query = "INSERT INTO GuardianSelection (guardianid, studentid) VALUES (%s, %s);"
+            conn.execute(insert_query, (selected_guardian, student_id))
         con.commit()
         return "Guardian selection successful."
+    except Exception as e:
+        con.rollback()
+        return f"Error: {e}"
+    finally:
+        con.close()
+
+
+
+# 선생님, 원장, 스탭들이 모든 학생들의 하원 주체 확인
+def view_all_students_and_guardians(con, conn):
+    con, conn = connect_to_database()
+    try:
+        query = """
+        SELECT
+            s.studentid,
+            s.studentname,
+            gs.guardianid AS guardian_id,
+            u.username AS guardian_name
+        FROM
+            Student s
+        LEFT JOIN
+            GuardianSelection gs ON s.studentid = gs.studentid
+        LEFT JOIN
+            Users u ON gs.guardianid = u.userid;
+        """
+        conn.execute(query)
+        result = conn.fetchall()
+        return result
     except Exception as e:
         con.rollback()
         return f"Error: {e}"
@@ -323,21 +358,6 @@ def view_free_board(conn):
     except Exception as e:
         return f"Error: {e}"
 
-# # 자유게시판 글 보기 함수
-# def view_post(con, conn, post_id):
-#     try:
-#         query = "SELECT Title, Content, TimeStamp, Image FROM FreeBoardQA WHERE PostID = %s;"
-#         conn.execute(query, (post_id,))
-#         post_info = conn.fetchone()
-
-#         query = "SELECT CommentContent FROM Comment WHERE PostID = %s;"
-#         conn.execute(query, (post_id,))
-#         comments = conn.fetchall()
-
-#         return {"post_info": post_info, "comments": comments}
-#     except Exception as e:
-#         return f"Error: {e}"
-
 # 자유게시판 글 삭제 함수
 def delete_post_free_board(con, conn, post_id, user_id):
     try:
@@ -386,8 +406,26 @@ def delete_comment(con, conn, comment_id, user_id):
 # 식단표 등록 함수
 def register_meal(con, conn, date, meal1, meal2, snack):
     try:
-        query = "INSERT INTO MealPlan (Date, Meal1, Meal2, Snack) VALUES (%s, %s, %s, %s);"
-        conn.execute(query, (date, meal1, meal2, snack))
+        # QUERY1 : 해당 날짜에 식단이 이미 있는지 확인
+        check_query = "SELECT * FROM MealPlan WHERE Date = %s;"
+        conn.execute(check_query, (date,))
+        existing_meal = conn.fetchone()
+        # 있으면 UPDATE, 없으면 INSERT로
+        if existing_meal:
+            # If a meal plan exists, update it
+            update_query = """
+                UPDATE MealPlan 
+                SET Meal1 = %s, Meal2 = %s, Snack = %s 
+                WHERE Date = %s;
+            """
+            conn.execute(update_query, (meal1, meal2, snack, date))
+        else:
+            # If no meal plan exists, insert a new record
+            insert_query = """
+                INSERT INTO MealPlan (Date, Meal1, Meal2, Snack) 
+                VALUES (%s, %s, %s, %s);
+            """
+            conn.execute(insert_query, (date, meal1, meal2, snack))
         con.commit()
         return "Meal plan registered successfully."
     except Exception as e:

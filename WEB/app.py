@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, request
 import psycopg2
 import re
 from test_all import *
@@ -118,6 +118,14 @@ def view_post_route(post_id):
 
     return render_template('post_detail.html', post_data=post_data)
 
+# 게시물 삭제
+@app.route('/delete_post', methods=['POST'])
+def delete_post():
+    post_id = request.form.get('post_id')
+
+    con, conn = connect_to_database()
+    result = delete_post_free_board(con, conn, post_id)
+    return redirect('/board')
 
 @app.route('/meals')
 def meals():

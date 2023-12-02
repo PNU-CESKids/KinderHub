@@ -291,30 +291,16 @@ def view_free_board(conn):
     except Exception as e:
         return f"Error: {e}"
 
-# # 자유게시판 글 보기 함수
-# def view_post(con, conn, post_id):
-#     try:
-#         query = "SELECT Title, Content, TimeStamp, Image FROM FreeBoardQA WHERE PostID = %s;"
-#         conn.execute(query, (post_id,))
-#         post_info = conn.fetchone()
-
-#         query = "SELECT CommentContent FROM Comment WHERE PostID = %s;"
-#         conn.execute(query, (post_id,))
-#         comments = conn.fetchall()
-
-#         return {"post_info": post_info, "comments": comments}
-#     except Exception as e:
-#         return f"Error: {e}"
 
 # 자유게시판 글 삭제 함수
-def delete_post_free_board(con, conn, post_id, user_id):
+def delete_post_free_board(con, conn, post_id):
     try:
         # user_id와 post_id가 일치하는지 확인
         query = "SELECT PosterID FROM FreeBoardQA WHERE PostID = %s;"
         conn.execute(query, (post_id,))
         poster_id = conn.fetchone()
 
-        if poster_id and poster_id[0] == user_id:
+        if poster_id:
             # 게시글 삭제
             query = "DELETE FROM FreeBoardQA WHERE PostID = %s;"
             conn.execute(query, (post_id,))

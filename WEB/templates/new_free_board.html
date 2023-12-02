@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create a New Free Board Post</title>
+    
 </head>
 
 <body>
@@ -20,8 +21,9 @@
         <label for="image">Image (optional):</label>
         <input type="file" id="image" name="image"><br>
 
-        <input type="submit" value="Submit">
+        <input type="submit" value="글 쓰기">
     </form>
+    <p> 글 조회 화면으로 돌아가기. <a href="{{ url_for('view_board') }}">글 목록</a>.</p>
 </body>
 
 </html>

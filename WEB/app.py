@@ -42,7 +42,7 @@ def dashboard():
         if user_info:
             user_name = user_info[0]
             user_role = user_info[1]
-            user_id = user_info[2]
+            #student_id = user_info[2]
             user_email = user_info[3]
 
             return render_template('dashboard.html', user_id=user_id, user_name=user_name, user_role=user_role, user_email=user_email)
@@ -170,14 +170,65 @@ def schedule():
 
 @app.route('/guardianselection')
 def guardianselection():
-    return render_template('guardianselection.html')
+    if 'user_id' in session:
+        user_id = session['user_id']
+        con, conn = connect_to_database()
+
+        try:
+            # Fetch user information
+            user_info = view_user_info(conn, int(user_id))
+            if not user_info:
+                return render_template('error.html', error_message="User not found.")
+
+            user_role = user_info[1]
+            student_id = user_info[2]
+
+            # Fetch student information
+            student_info = view_student_info(conn, student_id)
+            if not student_info:
+                return render_template('error.html', error_message="Student not found.")
+
+            student_name = student_info[0]
+
+            # Grant permissions based on user role
+            grant_guardian_selection_permissions(con, conn, user_role)
+
+            # Perform guardian selection (you might need to adjust this logic based on your requirements)
+            if user_role == 'Guardian':
+                # If the user is a guardian, perform the necessary actions for guardian selection
+                guardian_select_result = guardian_select(con, conn, int(user_id), student_id)
+                if guardian_select_result.startswith("Guardian selection successful"):
+                    return render_template('guardianselection.html', user_id=user_id, user_role=user_role,
+                                           student_id=student_id, student_name=student_name,
+                                           success_message="Guardian selection successful.")
+                else:
+                    return render_template('guardianselection.html', user_id=user_id, user_role=user_role,
+                                           student_id=student_id, student_name=student_name,
+                                           error_message=f"Error: {guardian_select_result}")
+
+            else:
+                # Handle the case when the user role is not a guardian
+                return render_template('guardianselection.html', user_id=user_id, user_role=user_role,
+                                       student_id=student_id, student_name=student_name,
+                                       error_message="Unauthorized. Only guardians can perform guardian selection.")
+
+        except Exception as e:
+            return render_template('error.html', error_message=f"Error: {e}")
+
+        finally:
+            close(con)
+
+    return redirect(url_for('login'))
+
 
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
 
-
+@app.route('/info')
+def info():
+    return render_template('info.html')
 
 @app.route('/registering', methods=['GET', 'POST'])
 def registering():

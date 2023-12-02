@@ -46,7 +46,6 @@ def register(con, conn, user_name, user_email, user_pw, user_role, student_id):
     finally:
         con.close()
 
-
  # 로그인
 def log_in(con, conn, user_email, user_pw):
     try:
@@ -100,10 +99,10 @@ def view_user_info(conn, user_id):
 # 원아 정보 조회
 def view_student_info(conn, user_id):
     try:
-        query = "SELECT * FROM Student WHERE StudentID = (SELECT StudentID FROM Users WHERE UserID = %s);"
+        query = "SELECT studentname FROM Student WHERE StudentID = (SELECT StudentID FROM Users WHERE UserID = %s);"
         conn.execute(query, (user_id,))
         result = conn.fetchone()
-        return result
+        return result[0]
     except Exception as e:
         return f"Error: {e}"
 
@@ -177,25 +176,35 @@ def view_schedule(con, conn, date=None):
         return f"Error: {e}"
 
 # 하원 주체 선택
-def guardian_select(con, conn, user_id, guardian_id):
+def grant_guardian_selection_permissions(con, conn, user_role):
     try:
-        # 현재 로그인한 사용자의 StudentID를 가져오는 코드
-        query1 = "SELECT StudentID FROM Users WHERE UserID = %s;"
-        conn.execute(query1, (user_id,))
-        result = conn.fetchone()
-        if result is None:
-            raise Exception("Student not found.")
+        read_permission = 'O'
+        write_permission = 'O' if user_role in ['Guardian'] else 'X'
 
-        student_id = result[0]
+        # 기존에 GRANT 되었던 권한들 다시 철회
+        conn.execute(f"REVOKE ALL PRIVILEGES ON guardianselection FROM {user_role};")
+        # Role을 확인해 GRANT해 줌
+        conn.execute(f"GRANT SELECT ON guardianselection TO {user_role};")
+        if write_permission == 'O':
+            con.execute(f"GRANT INSERT, UPDATE, DELETE ON guardianselection TO {user_role};")
+    except Exception as e:
+        con.rollback()
+        return f"Error: {e}"
+    finally:
+        con.close()
 
+def guardian_select(con, conn, user_id, student_id):
+    try:
         # GuardianSelection에 데이터 추가
-        query2 = "INSERT INTO GuardianSelection (GuardianID, StudentID) VALUES (%s, %s);"
-        conn.execute(query2, (guardian_id, student_id))
+        query = "INSERT INTO GuardianSelection (GuardianID, StudentID) VALUES (%s, %s);"
+        conn.execute(query, (guardian_id, student_id))
         con.commit()
         return "Guardian selection successful."
     except Exception as e:
         con.rollback()
         return f"Error: {e}"
+    finally:
+        con.close()
 
 # 자유게시판 글 등록
 def post_free_board(con, title, content, poster_id, image):
@@ -387,122 +396,6 @@ def view_other_days_meal(con, conn, date):
 
 def main():
     con, conn = connect_to_database()
-    
-    try:
-        # 로그인
-        user_id = input("Enter your username: ")
-        user_pw = input("Enter your password: ")
-
-        logged_in_user_id = log_in(con, conn, user_id, user_pw)
-        print(logged_in_user_id)
-
-        if logged_in_user_id.startswith("Login successful"):
-            '''
-            print("\n==========[Example of using the view_student_info function]==========")
-            student_info = view_student_info(conn, int(logged_in_user_id.split(": ")[1]))
-            print("Student Information:")
-            print(student_info)
-
-            print("\n==========[Example of using the manage_student_info function]==========")
-            attendance = input("Enter attendance (e.g., 1 for present, 0 for absent): ")
-            health_status = input("Enter health status: ")
-            address = input("Enter address: ")
-            manage_student_info(con, conn, int(logged_in_user_id.split(": ")[1]), attendance, health_status, address)
-            print("Student information updated successfully.")
-
-            print("\n==========[Example of using the view_chat function]==========")
-            receiver_id = int(input("Enter receiver ID: "))
-            user_role = "Principal"  # Assuming the logged-in user is the Principal for testing
-            chat_messages = view_chat(con, conn, receiver_id, user_role)
-            print("Chat Messages:")
-            print(chat_messages)
-
-            print("\n==========[Example of using the insert_chat function]==========")
-            receiver_id = int(input("Enter receiver ID for chat message: "))
-            message = input("Enter chat message: ")
-            image = None  # You can add image handling later
-            insert_chat(con, conn, int(logged_in_user_id.split(": ")[1]), receiver_id, message, image)
-            print("Chat message added successfully.")
-
-            print("\n==========[Example of using the set_schedule function]==========")
-            date = input("Enter date for schedule (YYYY-MM-DD): ")
-            time = input("Enter time for schedule (HH:MM:SS): ")
-            event_type = input("Enter event type: ")
-            student_ids_str = input("Enter student IDs for the schedule (comma-separated): ")
-            student_ids = [int(student_id) for student_id in student_ids_str.split(",")]
-            schedule_result = set_schedule(con, conn, date, time, event_type, student_ids)
-            print(schedule_result)
-
-            print("\n==========[Example of using the guardian_select function]==========")
-            guardian_id = int(input("Enter Guardian ID for selection: "))
-            guardian_select_result = guardian_select(con, conn, int(logged_in_user_id.split(": ")[1]), guardian_id)
-            print(guardian_select_result)
-
-            print("\n==========[Example of using the post_free_board function]==========")
-            title = input("Enter post title: ")
-            content = input("Enter post content: ")
-            image = None  # You can add image handling later
-            #(con, title, content, poster_id, image=None)
-            post_result = post_free_board(con,  title, content, int(logged_in_user_id.split(": ")[1]), image)
-            print(post_result)
-
-            print("\n==========[Example of using the write_post_comment function]==========")
-            post_id = int(input("Enter Post ID for comment: "))
-            commenter_id = int(input("Enter commenter ID: "))
-            comment_content = input("Enter comment content: ")
-            comment_result = write_post_comment(con, conn, post_id, commenter_id, comment_content)
-            print(comment_result)
-
-            print("\n==========[Example of using the view_free_board function]==========")
-            free_board_result = view_free_board(con, conn)
-            print("Free Board Posts:")
-            print(free_board_result)
-
-            print("\n==========[Example of using the view_post function]==========")
-            view_post_id = int(input("Enter Post ID to view details: "))
-            view_post_result = view_post(con, conn, view_post_id)
-            print("Post Details:")
-            print(view_post_result)
-
-            print("\n==========[Example of using the delete_post_free_board function]==========")
-            delete_post_id = int(input("Enter Post ID to delete: "))
-            delete_post_result = delete_post_free_board(con, conn, delete_post_id, int(logged_in_user_id.split(": ")[1]))
-            print(delete_post_result)
-
-            print("\n==========[Example of using the delete_comment function]==========")
-            delete_comment_id = int(input("Enter Comment ID to delete: "))
-            delete_comment_result = delete_comment(con, conn, delete_comment_id, int(logged_in_user_id.split(": ")[1]))
-            print(delete_comment_result)
-            
-            print("\n==========[Example of using the register_meal function]==========")
-            date = input("Enter date for meal registration (YYYY-MM-DD): ")
-            meal1 = input("Enter meal 1: ")
-            meal2 = input("Enter meal 2: ")
-            snack = input("Enter snack: ")
-            register_meal_result = register_meal(con, conn, date, meal1, meal2, snack)
-            print(register_meal_result)
-
-            print("\n==========[Example of using the view_todays_meal function]==========")
-            view_todays_meal_result = view_todays_meal(con, conn)
-            print("Today's Meal:")
-            print(view_todays_meal_result)
-
-            print("\n==========[Example of using the view_other_days_meal function]==========")
-            view_other_date = input("Enter date to view meal (YYYY-MM-DD): ")
-            view_other_days_meal_result = view_other_days_meal(con, conn, view_other_date)
-            print("Meal for the specified date:")
-            print(view_other_days_meal_result)
-            '''
-        # 로그아웃
-        log_out(con, conn)
-        print("Logout successful.")
-
-    finally:
-        # Close cursor and connection if they are still open
-        if conn is not None and not conn.closed:
-            conn.close()
-        if con is not None and not con.closed:
-            con.close()
 
 if __name__ == '__main__':
     main()

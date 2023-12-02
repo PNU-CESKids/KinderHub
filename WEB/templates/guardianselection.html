@@ -4,8 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body {
+            background-color: #f8f8f8;
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1, h2 {
+            color: #3e3e3e;
+            padding: 5px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        .section {
+            flex: 1;
+            margin: 20px;
+            padding: 10px;
+            border: 5px solid #c0b9a5;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #c0b9a5;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #c0b9a5;
+        }
+    </style>
 </head>
 <body>
-    <h1>안심하원서비스</h1>
+    <h1>Guardian Selection Service</h1>
+
+    <div class="container">
+        <div class="section">
+            <!-- Read Guardian -->
+            <!-- Visible) userrole == StudentFamily or Student or Guardian -->
+            <h2>Today's Guardian</h2>
+            {% if user_info %}
+            <p>{{ student_id }}</p>
+            <p>{{ student_name }}</p>
+            {% endif %}
+            <p><!-- Display relevant guardian information here --></p>
+        </div>
+
+        <div class="section">
+            <!-- Read Guardian for All Students-->
+            <!-- Visible) userrole == Teacher or Principal or OtherSchoolStaff -->
+            <h2>Guardian Information for All Students</h2>
+            <p><!-- Display relevant information for all students --></p>
+        </div>
+
+        <div class="section">
+            <!-- Write Guardian -->
+            <!-- Visible) userrole == Guardian -->
+            <h2>Guardian Selection</h2>
+            <form action="/guardianselection" method="post">
+                <!-- Add form elements for Guardian Selection here -->
+                <!-- Example: Select Today's Guardian, input: Guardian -->
+                <label for="todayGuardian">Select Today's Guardian:</label>
+                <input type="text" id="todayGuardian" name="todayGuardian" required>
+                <button type="submit">Submit Guardian Selection</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

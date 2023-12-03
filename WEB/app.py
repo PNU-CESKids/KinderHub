@@ -151,13 +151,20 @@ def notification():
     else:
         print("Error: please login")
 
-    chat_messages = view_chat(conn,student_id,user_role)
+    if user_role in ["Guardian", "Teacher"]:
+        chat_messages = view_chat(conn, student_id, user_role)
+    else:
+        chat_messages = None
+        print("권한 없음")
 
     # Close the cursor
     con.close()
 
     return render_template('notification.html', chat_messages=chat_messages,user_role=user_role)
 
+@app.route('/notification/write')
+def insert_chat_route():
+    return render_template('write_notification.html')
 
 
 @app.route('/logout')

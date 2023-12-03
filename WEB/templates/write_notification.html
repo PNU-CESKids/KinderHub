@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알림장 쓰기</title>
+</head>
+<body>
+    <h1>알림장 쓰기</h1>
+    <form method="post" enctype="multipart/form-data">
+        
+        <label for="content">Content:</label>
+        <textarea id="content" name="content" required></textarea><br>
+
+        <label for="image">Image (optional):</label>
+        <input type="file" id="image" name="image"><br>
+
+        <input type="submit" value="글 쓰기">
+    </form>
+    <p> 알림장 조회 화면으로 돌아가기. <a href="{{ url_for('notification') }}">글 목록</a>.</p>
+</body>
+</html>

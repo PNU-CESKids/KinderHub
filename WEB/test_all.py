@@ -122,21 +122,21 @@ def manage_student_info(con, conn, user_id, attendance, health_status, address):
 # 알림장 조회
 def view_chat(conn, student_id, user_role):
     try:
-        if user_role in ["Guardian", "Teacher"]:
-            query = """
-                    SELECT SenderID, ReceiverID, Message, TimeStamp, Image 
-                    FROM Chat 
-                    WHERE ReceiverID = %s;
-                    """
+        query = """
+                SELECT SenderID, ReceiverID, Message, TimeStamp, Image 
+                FROM Chat 
+                WHERE ReceiverID = %s;
+                """
 
-            conn.execute(query, (student_id,))
-            result = conn.fetchall()
+        conn.execute(query, (student_id,))
+        result = conn.fetchall()
 
-            return result
-        else:
-            return "Unauthorized. Only Guardian and Teacher can view chat messages."
+        return result
     except Exception as e:
         return f"Error: {e}"
+    else:
+        return "Unauthorized. Only Guardian and Teacher can view chat messages."
+
 
 
 

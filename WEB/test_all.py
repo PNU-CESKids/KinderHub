@@ -24,7 +24,6 @@ def close(connection):
     except Exception as e:
         print(f"Error closing connection: {e}")
 
-
 # password 유효성 검사
 def validate_password(self):
     return len(self.password) >= 4
@@ -64,12 +63,10 @@ def log_in(con, conn, user_email, user_pw):
     except Exception as e:
         return None  # Handle the exception or log it, return None for simplicity
 
-
 # 로그아웃
 def log_out(con, conn):
     con.close()
     return "Logout successful."
-
 
 # user 정보 조회
 def view_user_info(conn, user_id):
@@ -99,7 +96,6 @@ def view_user_info(conn, user_id):
     except Exception as e:
         return f"Error: {e}"
 
-
 # 원아 정보 조회
 def view_student_info(conn, user_id):
     try:
@@ -109,7 +105,6 @@ def view_student_info(conn, user_id):
         return result
     except Exception as e:
         return f"Error: {e}"
-
 
 # 원아 정보 관리
 def manage_student_info(con, conn, user_id, attendance, health_status, address):
@@ -221,7 +216,6 @@ def view_guardian(con, conn, student_id):
     finally:
         con.close()
 
-
 # 하원 주체 선택
 def guardian_select(con, conn, user_id, student_id, selected_guardian):
     con, conn = connect_to_database()
@@ -243,8 +237,6 @@ def guardian_select(con, conn, user_id, student_id, selected_guardian):
         return f"Error: {e}"
     finally:
         con.close()
-
-
 
 # 선생님, 원장, 스탭들이 모든 학생들의 하원 주체 확인
 def view_all_students_and_guardians(con, conn):
@@ -288,7 +280,6 @@ def post_free_board(con, title, content, poster_id, image):
         print(f"Error: Unable to create post\n{e}")
     finally:
         con.close()  # Close the connection here
-
 
 def get_comments_by_postid(postid):
     con, conn = connect_to_database()
@@ -343,7 +334,6 @@ def view_post(con, conn, post_id):
         return {"post_info": post_info, "comments": comments}
     except Exception as e:
         return {"error": f"Error: {e}"}
-
 
 # 게시판 글에 댓글 등록 함수
 def write_post_comment(con, conn, post_id, commenter_id, comment_content):
@@ -461,7 +451,23 @@ def view_other_days_meal(con, conn, date):
     except Exception as e:
         return f"Error: {e}"
 
+# 학생 등록 함수
+def register_stud(con, conn, studentname, classname, birthdate, attendance, healthstatus, address):
+    try:
+        student_insert_query = "INSERT INTO Student (studentname, classname, birthdate, attendance, healthstatus, address) VALUES (%s, %s, %s, %s, %s, %s) RETURNING studentID;"
+        
+        conn.execute(student_insert_query, (studentname, classname, birthdate, attendance, healthstatus, address))
+        student_id = conn.fetchone()[0]
 
+        con.commit()
+        return f"Student {student_id} registered successfully."
+    
+    except Exception as e:
+        con.rollback()
+        return f"Error during student registration: {e}"
+    
+    finally:
+        close(con)
 
 def main():
     con, conn = connect_to_database()

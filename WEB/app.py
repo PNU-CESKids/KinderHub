@@ -300,11 +300,37 @@ def registering():
 
     # If it's a GET request, simply render the template
     return render_template('registering.html')
-
-# 원장일 경우) 학생 등록 페이지 보임
 @app.route('/student_registering', methods=['GET', 'POST'])
 def student_registering():
+    if request.method == 'POST':
+        # Retrieve form data
+        studentname = request.form['studentname']
+        classname = request.form['classname']
+        birthdate = request.form['birthdate']
+        attendance = request.form['attendance']
+        healthstatus = request.form.get('healthstatus') == 'on'  # Convert checkbox value to boolean
+        address = request.form['address']
+
+        if not studentname or not classname or not birthdate or not attendance or not address:
+            return render_template('student_registering.html', error="All fields are required.")
+
+        try:
+            con, conn = connect_to_database()
+
+            # Call the registration function
+            result = register_stud(con, conn, studentname, classname, birthdate, attendance, healthstatus, address)
+            
+            return render_template('student_registering.html', success=result)
+
+        except Exception as e:
+            print(f"Error during student registration: {e}")
+            return render_template('student_registering.html', error=f"Student Registration failed: {str(e)}")
+
+        finally:
+            close(con)
+
     return render_template('student_registering.html')
+
 
 if __name__ == '__main__':
     app.secret_key = 'your_secret_key'

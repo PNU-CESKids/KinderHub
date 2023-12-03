@@ -6,6 +6,37 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Student Registering</h1>
+    <h1>학생 등록</h1>
+
+    <form action="{{ url_for('student_registering') }}" method="post">
+        <label for="studentname">Student Name:</label>
+        <input type="text" id="studentname" name="studentname" required>
+        <br>
+
+        <label for="classname">Class Name:</label>
+        <input type="text" id="classname" name="classname" required>
+        <br>
+
+        <label for="birthdate">Birthdate:</label>
+        <input type="date" id="birthdate" name="birthdate" required>
+        <br>
+
+        <label for="attendance">Attendance:</label>
+        <input type="text" id="attendance" name="attendance" required>
+        <br>
+
+        <label for="healthstatus">Health Status:</label>
+        <select id="healthstatus" name="healthstatus">
+            <option value="true" {% if healthstatus == 'true' %}selected{% endif %}>True</option>
+            <option value="false" {% if healthstatus == 'false' %}selected{% endif %}>False</option>
+        </select>
+        <br>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required>
+        <br>
+
+        <button type="submit">학생 등록하기</button>
+    </form>
 </body>
 </html>

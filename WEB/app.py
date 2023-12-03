@@ -6,7 +6,7 @@ from test_all import *
 app = Flask(__name__)
 
 # Configure your database connection here
-DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/termkk"
+DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/term"
 
 
 @app.route('/')
@@ -51,7 +51,8 @@ def dashboard():
         
     return redirect(url_for('login'))
     
-# app.py 파일에서
+# -------------------------------- 게시판
+
 # 게시판 글쓰기
 @app.route('/free_board/new', methods=['GET', 'POST'])
 def post_board():
@@ -126,6 +127,37 @@ def delete_post():
     result = delete_post_free_board(con, conn, post_id)
     return redirect('/board')
 
+# -------------------------------- 알림장
+# notification
+@app.route('/notification')
+def notification():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        con, conn = connect_to_database()
+        user_info = view_user_info(conn, int(user_id))
+        
+        if user_info:
+            user_role = user_info[1]
+            student_id = user_info[2]
+    else:
+        print("Error: please login")
+
+    if user_role in ["Guardian", "Teacher"]:
+        chat_messages = view_chat(conn, student_id, user_role)
+    else:
+        chat_messages = None
+        print("권한 없음")
+
+    # Close the cursor
+    con.close()
+
+    return render_template('notification.html', chat_messages=chat_messages,user_role=user_role)
+
+@app.route('/notification/write')
+def insert_chat_route():
+    return render_template('write_notification.html')
+
+
 @app.route('/meals', methods=['GET', 'POST'])
 def meals():
     con, conn = connect_to_database()
@@ -162,12 +194,6 @@ def meals():
 
     finally:
         close(con)
-
-
-# notification
-@app.route('/notification')
-def notification():
-    return render_template('notification.html')
 
 @app.route('/schedule')
 def schedule():
@@ -218,7 +244,6 @@ def guardianselection():
                                            all_students_info=all_students_info, message=f"Error: {guardian_select_result}")
 
             else:
-                # Handle the case when the user role is not a guardian
                 return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
                                        student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
                                        all_students_info=all_students_info, message="Unauthorized. Only guardians can perform guardian selection.")
@@ -230,7 +255,6 @@ def guardianselection():
             close(con)
 
     return redirect(url_for('login'))
-
 
 @app.route('/logout')
 def logout():
@@ -244,7 +268,6 @@ def info():
 @app.route('/registering', methods=['GET', 'POST'])
 def registering():
     if request.method == 'POST':
-        # Extract form data
         username = request.form['username']
         useremail = request.form['useremail']
         password = request.form['password']

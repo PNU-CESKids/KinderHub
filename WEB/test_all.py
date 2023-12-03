@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Connect to Database
 def connect_to_database():
     con = psycopg2.connect(
-        database='termkk',
+        database='term',
         user='db2023',
         password='db!2023',
         host='::1',
@@ -85,7 +85,7 @@ def get_user_name_by_id(con, user_id):
         return result[0]
     return None
 
-
+# 사용자 정보 조회
 def view_user_info(conn, user_id):
     try:
         query = "SELECT UserName, UserRole, studentid, useremail FROM Users WHERE UserID = %s;"
@@ -119,17 +119,22 @@ def manage_student_info(con, conn, user_id, attendance, health_status, address):
         return f"Error: {e}"
 
 # 알림장 조회
-def view_chat(con, conn, receiver_id, user_role):
+def view_chat(conn, student_id, user_role):
     try:
-        if user_role in ["Principal", "Teacher"]:
-            query = "SELECT SenderID, Message, TimeStamp, Image FROM Chat WHERE ReceiverID = %s;"
-            conn.execute(query, (receiver_id,))
-            result = conn.fetchall()
-            return result
-        else:
-            return "Unauthorized. Only Principal and Teacher can view chat messages."
+        query = """
+                SELECT SenderID, ReceiverID, Message, TimeStamp, Image 
+                FROM Chat 
+                WHERE ReceiverID = %s;
+                """
+        conn.execute(query, (student_id,))
+        result = conn.fetchall()
+
+        return result
     except Exception as e:
         return f"Error: {e}"
+    else:
+        return "Unauthorized. Only Guardian and Teacher can view chat messages."
+
 
 # 알림장 작성
 def insert_chat(con, conn, user_id, receiver_id, message, image):
@@ -460,7 +465,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-    

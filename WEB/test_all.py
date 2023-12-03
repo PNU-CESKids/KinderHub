@@ -191,6 +191,8 @@ def grant_guardian_selection_permissions(con, conn, user_role):
         conn.execute(f"GRANT SELECT ON guardianselection TO {user_role};")
         if write_permission == 'O':
             con.execute(f"GRANT INSERT, UPDATE, DELETE ON guardianselection TO {user_role};")
+        print(f"after(1) transaction - user_role: {user_role}")
+        con.commit()
     except Exception as e:
         con.rollback()
         return f"Error: {e}"
@@ -209,6 +211,8 @@ def view_guardian(con, conn, student_id):
         """
         conn.execute(query, (student_id,))
         result = conn.fetchall()
+        print(f"after(2) transaction - student_id: {student_id}")
+        con.commit()
         return result
     except Exception as e:
         con.rollback()
@@ -230,6 +234,7 @@ def guardian_select(con, conn, user_id, student_id, selected_guardian):
         else:
             insert_query = "INSERT INTO GuardianSelection (guardianid, studentid) VALUES (%s, %s);"
             conn.execute(insert_query, (selected_guardian, student_id))
+        print(f"after(3) transaction - user_id: {user_id}, student_id: {student_id}, selected_guardian: {selected_guardian}")
         con.commit()
         return "Guardian selection successful."
     except Exception as e:
@@ -257,6 +262,7 @@ def view_all_students_and_guardians(con, conn):
         """
         conn.execute(query)
         result = conn.fetchall()
+        con.commit()
         return result
     except Exception as e:
         con.rollback()

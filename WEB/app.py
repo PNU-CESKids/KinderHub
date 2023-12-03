@@ -208,6 +208,7 @@ def guardianselection():
         try:
             # Fetch user information
             user_info = view_user_info(conn, int(user_id))
+            
             if not user_info:
                 return render_template('error.html', error_message="User not found.")
 
@@ -218,7 +219,7 @@ def guardianselection():
             all_students_info = view_all_students_and_guardians(con, conn)
             print(all_students_info)
             grant_guardian_selection_permissions(con, conn, user_role)
-            
+
             # 원장이 아닐 경우에만 Student 정보 포함된 것 전달
             if student_id is not None: 
                 student_info = view_student_info(conn, student_id)
@@ -230,22 +231,31 @@ def guardianselection():
 
                 if user_role == 'Guardian':
                     today_guardian = request.form.get('todayGuardian')
-                    guardian_select_result = guardian_select(con, conn, int(user_id), student_id, today_guardian)
-                
-                    if guardian_select_result.startswith("Guardian selection successful"):
-                        return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name,
-                                           student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
-                                           all_students_info=all_students_info, message="You can update or insert new Guardian.")
+                    
+                    print(f"Before transaction - user_id: {user_id}, student_id: {student_id}, guardian: {guardian_id}")
+                    
+                    # today_guardian 값이 비어 있으면 함수 호출하지 않음
+                    if today_guardian:
+                        guardian_select_result = guardian_select(con, conn, int(user_id), student_id, today_guardian)
+                    
+                        if guardian_select_result.startswith("Guardian selection successful"):
+                            return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name,
+                                                student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
+                                                all_students_info=all_students_info, message="You can update or insert new Guardian.")
+                        else:
+                            return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
+                                                student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
+                                                all_students_info=all_students_info, message=f"Error: {guardian_select_result}")
                     else:
+                        # today_guardian 값이 비어 있을 때의 처리
                         return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
                                                student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
-                                               all_students_info=all_students_info, message=f"Error: {guardian_select_result}")
+                                               all_students_info=all_students_info, message="Please enter a value before submitting.")
 
                 else:
                     return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
                                            student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
                                            all_students_info=all_students_info, message="Unauthorized. Only guardians can perform guardian selection.")
-
 
             return render_template('guardianselection.html', user_id=user_id, user_role=user_role, user_info=user_info, 
                                            all_students_info=all_students_info, message="Principal/OtherSchoolStaff/Teacher : 모든 학생 정보 출력.")

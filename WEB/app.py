@@ -53,6 +53,9 @@ def dashboard():
     return redirect(url_for('login'))
     
 # app.py 파일에서
+
+# -------------------------------- 게시판
+
 # 게시판 글쓰기
 @app.route('/free_board/new', methods=['GET', 'POST'])
 def post_board():
@@ -131,10 +134,30 @@ def delete_post():
 def meals():
     return render_template('meal.html')
 
+
+
+# -------------------------------- 알림장
 # notification
 @app.route('/notification')
 def notification():
-    return render_template('notification.html')
+    if 'user_id' in session:
+        user_id = session['user_id']
+        con, conn = connect_to_database()
+        user_info = view_user_info(conn, int(user_id))
+        
+        if user_info:
+            user_role = user_info[1]
+            student_id = user_info[2]
+    else:
+        print("Error: please login")
+
+    chat_messages = view_chat(conn,student_id,user_role)
+
+    # Close the cursor
+    con.close()
+
+    return render_template('notification.html', chat_messages=chat_messages,user_role=user_role)
+
 
 
 @app.route('/logout')

@@ -120,17 +120,25 @@ def manage_student_info(con, conn, user_id, attendance, health_status, address):
         return f"Error: {e}"
 
 # 알림장 조회
-def view_chat(con, conn, receiver_id, user_role):
+def view_chat(conn, student_id, user_role):
     try:
-        if user_role in ["Principal", "Teacher"]:
-            query = "SELECT SenderID, Message, TimeStamp, Image FROM Chat WHERE ReceiverID = %s;"
-            conn.execute(query, (receiver_id,))
+        if user_role in ["Guardian", "Teacher"]:
+            query = """
+                    SELECT SenderID, ReceiverID, Message, TimeStamp, Image 
+                    FROM Chat 
+                    WHERE ReceiverID = %s;
+                    """
+
+            conn.execute(query, (student_id,))
             result = conn.fetchall()
+
             return result
         else:
-            return "Unauthorized. Only Principal and Teacher can view chat messages."
+            return "Unauthorized. Only Guardian and Teacher can view chat messages."
     except Exception as e:
         return f"Error: {e}"
+
+
 
 # 알림장 작성
 def insert_chat(con, conn, user_id, receiver_id, message, image):

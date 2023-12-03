@@ -3,9 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>알림장 조회</title>
 </head>
 <body>
-    <h1>알림장</h1>
+    {% if chat_messages %}
+    <h1>알림장 조회</h1>
+    <ul>
+        {% for message in chat_messages %}
+            {{user_role}} : {{ message[2] }}
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>{{ "Unauthorized. Only Guardian and Teacher can view chat messages for their students." }}</p>
+    {% endif %}
 </body>
 </html>

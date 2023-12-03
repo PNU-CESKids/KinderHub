@@ -31,6 +31,13 @@
     <a href="{{ url_for('guardianselection') }}">안심하원서비스</a>
     <br>
     <a href="{{ url_for('logout') }}">로그아웃</a>
+    <br>
+
+    <!-- user_role이 원장인 경우에만 학생 등록 페이지 표시됨. -->
+    {% if user_role not in ['Teacher', 'OtherSchoolStaff', 'Guardian', 'StudentsFamily', 'Student'] %}
+        <a href="{{ url_for('student_registering') }}">학생 등록</a>
+        <br>
+    {% endif %}
 
 </body>
 

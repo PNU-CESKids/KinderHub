@@ -6,7 +6,7 @@ from test_all import *
 app = Flask(__name__)
 
 # Configure your database connection here
-DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/term"
+DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/termkk"
 
 
 @app.route('/')
@@ -275,28 +275,20 @@ def registering():
         student_id = request.form['student_id']
 
         # Validate the form data (you can add more validation as needed)
-        if not username or not useremail or not password or not role or not student_id:
+        if not username or not useremail or not password or not role:
             return render_template('registering.html', error="All fields are required.")
 
         # Process the user data and store it in the database
         try:
-            # Establish a new database connection
             con, conn = connect_to_database()
 
-            # Print or log debug information
             print(f"Form Data: {username}, {useremail}, {password}, {role}, {student_id}")
             print(f"Database Connection: {conn}")
 
-            # Assuming 'conn' is your database connection
             result = register(con, conn, username, useremail, password, role, student_id)
-
-            # Print or log the result of the registration
             print(f"Registration Result: {result}")
-
-            # Close the connection after the operation
             conn.close()
 
-            # Redirect to the dashboard or login page after a successful registration
             return redirect(url_for('index'))
         except Exception as e:
             session.clear()
@@ -306,6 +298,11 @@ def registering():
 
     # If it's a GET request, simply render the template
     return render_template('registering.html')
+
+# 원장일 경우) 학생 등록 페이지 보임
+@app.route('/student_registering', methods=['GET', 'POST'])
+def student_registering():
+    return render_template('student_registering.html')
 
 if __name__ == '__main__':
     app.secret_key = 'your_secret_key'

@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Connect to Database
 def connect_to_database():
     con = psycopg2.connect(
-        database='term',
+        database='termkk',
         user='db2023',
         password='db!2023',
         host='::1',
@@ -35,6 +35,10 @@ def register(con, conn, user_name, user_email, user_pw, user_role, student_id):
     try:
         # Insert into Users table
         user_insert_query = "INSERT INTO Users (UserName, UserRole, StudentID, UserPassword, UserEmail) VALUES (%s, %s, %s, %s, %s) RETURNING UserID;"
+        
+        if not student_id and user_role in ('Principal', 'Teacher', 'OtherSchoolStaff'):
+            student_id = None
+
         conn.execute(user_insert_query, (user_name, user_role, student_id, hashed_password, user_email))
         user_id = conn.fetchone()[0]
 
@@ -134,7 +138,6 @@ def view_chat(conn, student_id, user_role):
         return f"Error: {e}"
     else:
         return "Unauthorized. Only Guardian and Teacher can view chat messages."
-
 
 # 알림장 작성
 def insert_chat(con, conn, user_id, receiver_id, message, image):

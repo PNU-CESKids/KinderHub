@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: #f8f8f8;
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1, h2 {
+            color: #3e3e3e;
+            padding: 5px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        .section {
+            flex: 1;
+            margin: 20px;
+            padding: 10px;
+            border: 5px solid #c0b9a5;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #c0b9a5;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #c0b9a5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Guardian Selection Service</h1>
+    <p>{{ message }}</p>
+
+    <div class="container">
+        <div class="section" {% if user_role not in ['StudentsFamily', 'Student', 'Guardian'] %} style="display: none;"{% endif %}>
+            <h2>지정 하원 주체</h2>
+            {% if student_info %}
+                {% if guardian_id %}
+                    <h4>{{ student_name }}의 지정된 하원 주체 : {{ guardian_name }}</h4>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="section" {% if user_role not in ['Teacher', 'Principal', 'OtherSchoolStaff'] %} style="display: none;"{% endif %}>
+            <h2>Guardian Information for All Students</h2>
+            <ul>
+            {% for student_info in all_students_info %}
+                <li>
+                    <strong>Student ID:</strong> {{ student_info[0] }} |
+                    <strong>Student Name:</strong> {{ student_info[1] }} |
+                    <strong>Guardian ID:</strong> {{ student_info[2] }} |
+                    <strong>Guardian Name:</strong> {{ student_info[3] }}
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+
+        <div class="section"{% if user_role not in ['Guardian'] %} style="display: none;"{% endif %}>
+            <h2>Guardian Selection</h2>
+            <form action="/guardianselection" method="post">
+                <label for="todayGuardian">Select Today's Guardian:</label>
+                <input type="text" id="todayGuardian" name="todayGuardian" required>
+                <button type="submit">Submit Guardian Selection</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

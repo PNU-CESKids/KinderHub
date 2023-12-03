@@ -5,7 +5,6 @@ from test_all import *
 
 app = Flask(__name__)
 
-
 # Configure your database connection here
 DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/term"
 
@@ -43,7 +42,7 @@ def dashboard():
         if user_info:
             user_name = user_info[0]
             user_role = user_info[1]
-            user_id = user_info[2]
+            #student_id = user_info[2]
             user_email = user_info[3]
 
             return render_template('dashboard.html', user_id=user_id, user_name=user_name, user_role=user_role, user_email=user_email)
@@ -52,8 +51,6 @@ def dashboard():
         
     return redirect(url_for('login'))
     
-# app.py 파일에서
-
 # -------------------------------- 게시판
 
 # 게시판 글쓰기
@@ -130,12 +127,6 @@ def delete_post():
     result = delete_post_free_board(con, conn, post_id)
     return redirect('/board')
 
-@app.route('/meals')
-def meals():
-    return render_template('meal.html')
-
-
-
 # -------------------------------- 알림장
 # notification
 @app.route('/notification')
@@ -167,17 +158,116 @@ def insert_chat_route():
     return render_template('write_notification.html')
 
 
+@app.route('/meals', methods=['GET', 'POST'])
+def meals():
+    con, conn = connect_to_database()
+
+    try:
+        today_meal = None  # Define today_meal here
+
+        if request.method == 'POST':
+            action = request.form['action']
+
+            if action == 'view':
+                meal_date = request.form['meal_date']
+                today_meal = view_todays_meal(con, conn)
+                other_days_meal = view_other_days_meal(con, conn, meal_date)
+                return render_template('meal.html', today_meal=today_meal, other_days_meal=other_days_meal)
+
+            elif action == 'register':
+                today_meal = view_todays_meal(con, conn)
+
+                register_date = request.form['register_date']
+                meal1 = request.form['meal1']
+                meal2 = request.form['meal2']
+                snack = request.form['snack']
+
+                register_meal(con, conn, register_date, meal1, meal2, snack)
+                return render_template('meal.html', today_meal=today_meal)
+
+        else:
+            today_meal = view_todays_meal(con, conn)
+            return render_template('meal.html', today_meal=today_meal)
+
+    except Exception as e:
+        return render_template('error.html', error_message=f"Error: {e}")
+
+    finally:
+        close(con)
+
+@app.route('/schedule')
+def schedule():
+    return render_template('schedule.html')
+
+@app.route('/guardianselection', methods=['GET', 'POST'])
+def guardianselection():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        con, conn = connect_to_database()
+
+        try:
+            # Fetch user information
+            user_info = view_user_info(conn, int(user_id))
+            if not user_info:
+                return render_template('error.html', error_message="User not found.")
+
+            user_role = user_info[1]
+            student_id = user_info[2]
+            print(f"User Data: user_role={user_role}, student_id={student_id}, user_id={user_id}")
+            # Fetch student information
+            student_info = view_student_info(conn, student_id)
+            if not student_info:
+                return render_template('error.html', error_message="Student not found.")
+
+            student_name = student_info[0]
+
+            guardian = view_guardian(con, conn, student_id)
+            if guardian:
+                guardian_id, guardian_name = guardian[0][0], guardian[0][1]
+
+            all_students_info = view_all_students_and_guardians(con, conn)
+            print(all_students_info)
+
+            grant_guardian_selection_permissions(con, conn, user_role)
+
+            if user_role == 'Guardian':
+                today_guardian = request.form.get('todayGuardian')
+                guardian_select_result = guardian_select(con, conn, int(user_id), student_id, today_guardian)
+                
+                if guardian_select_result.startswith("Guardian selection successful"):
+                    return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name,
+                                           student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
+                                           all_students_info=all_students_info, message="You can update or insert new Guardian.")
+                else:
+                    return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
+                                           student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
+                                           all_students_info=all_students_info, message=f"Error: {guardian_select_result}")
+
+            else:
+                return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
+                                       student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
+                                       all_students_info=all_students_info, message="Unauthorized. Only guardians can perform guardian selection.")
+
+        except Exception as e:
+            return render_template('error.html', error_message=f"Error: {e}")
+
+        finally:
+            close(con)
+
+    return redirect(url_for('login'))
+
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
 
-
+@app.route('/info')
+def info():
+    return render_template('info.html')
 
 @app.route('/registering', methods=['GET', 'POST'])
 def registering():
     if request.method == 'POST':
-        # Extract form data
         username = request.form['username']
         useremail = request.form['useremail']
         password = request.form['password']

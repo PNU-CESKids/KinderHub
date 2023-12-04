@@ -3,20 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>알림장 쓰기</title>
+    <title>Write Notification</title>
 </head>
 <body>
-    <h1>알림장 쓰기</h1>
-    <form method="post" enctype="multipart/form-data">
-        
-        <label for="content">Content:</label>
-        <textarea id="content" name="content" required></textarea><br>
+    <h1>Write Notification</h1>
 
-        <label for="image">Image (optional):</label>
-        <input type="file" id="image" name="image"><br>
+    {% if insert_messages %}
+        <p>Message inserted successfully!</p>
+    {% endif %}
 
-        <input type="submit" value="글 쓰기">
+    <form method="post" action="/notification/write">
+        <label for="message">Message:</label>
+        <textarea name="message" id="message" rows="4" cols="50"></textarea><br>
+
+        <label for="image">Image URL:</label>
+        <input type="text" name="image" id="image"><br>
+
+        {% if user_role == 'Teacher' %}
+            {% if students %}
+                
+                <label for="selected_student_id">Select Student:</label>
+                <select name="selected_student_id" id="selected_student_id">
+                    {% for student in students %}
+                        <option value="{{ student[0] }}" required>{{ student[1] }}</option>
+                    {% endfor %}
+                </select><br>
+            {% else %}
+                <p>No student information available</p>
+            {% endif %}
+        {% endif %}
+        <input type="submit" value="채팅 보내기">
     </form>
-    <p> 알림장 조회 화면으로 돌아가기. <a href="{{ url_for('notification') }}">글 목록</a>.</p>
+    
 </body>
 </html>

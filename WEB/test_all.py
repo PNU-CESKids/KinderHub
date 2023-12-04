@@ -106,6 +106,16 @@ def view_student_info(conn, user_id):
     except Exception as e:
         return f"Error: {e}"
 
+def get_student_info(conn, user_id):
+    try:
+        query = "SELECT * FROM student WHERE teacherid = %s;"
+        conn.execute(query, (user_id,))
+        result = conn.fetchall()
+        print("result: " + str(result))
+        return result
+    except Exception as e:
+        return f"Error: {e}"
+
 
 # 원아 정보 관리
 def manage_student_info(con, conn, user_id, attendance, health_status, address):

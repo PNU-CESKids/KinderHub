@@ -199,7 +199,7 @@ def meals():
 def schedule():
 
 
-    
+
     return render_template('schedule.html')
 
 @app.route('/guardianselection', methods=['GET', 'POST'])
@@ -313,6 +313,7 @@ def registering():
 
     # If it's a GET request, simply render the template
     return render_template('registering.html')
+
 @app.route('/student_registering', methods=['GET', 'POST'])
 def student_registering():
     if request.method == 'POST':
@@ -323,15 +324,19 @@ def student_registering():
         attendance = request.form['attendance']
         healthstatus = request.form.get('healthstatus') == 'on'  # Convert checkbox value to boolean
         address = request.form['address']
+        teacherid = request.form['teacherid']
+        # default gaurdian = 원장 자신으로 설정, 즉, user_id로!
+        if 'user_id' in session:
+            user_id = session['user_id']
 
-        if not studentname or not classname or not birthdate or not attendance or not address:
+        if not studentname or not classname or not birthdate or not attendance or not address or not teacherid:
             return render_template('student_registering.html', error="All fields are required.")
 
         try:
             con, conn = connect_to_database()
 
             # Call the registration function
-            result = register_stud(con, conn, studentname, classname, birthdate, attendance, healthstatus, address)
+            result = register_stud(con, conn, studentname, classname, birthdate, attendance, healthstatus, address, teacherid, user_id)
             
             return render_template('student_registering.html', success=result)
 

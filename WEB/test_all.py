@@ -219,7 +219,7 @@ def view_guardian(con, conn, student_id):
         return f"Error: {e}"
     finally:
         con.close()
-        
+
 # 하원 주체 선택
 def guardian_select(con, conn, user_id, student_id, selected_guardian):
     con, conn = connect_to_database()
@@ -458,12 +458,16 @@ def view_other_days_meal(con, conn, date):
         return f"Error: {e}"
 
 # 학생 등록 함수
-def register_stud(con, conn, studentname, classname, birthdate, attendance, healthstatus, address):
+def register_stud(con, conn, studentname, classname, birthdate, attendance, healthstatus, address, teacherid, guardianid):
     try:
-        student_insert_query = "INSERT INTO Student (studentname, classname, birthdate, attendance, healthstatus, address) VALUES (%s, %s, %s, %s, %s, %s) RETURNING studentID;"
-        
-        conn.execute(student_insert_query, (studentname, classname, birthdate, attendance, healthstatus, address))
+        student_insert_query = "INSERT INTO Student (studentname, classname, birthdate, attendance, healthstatus, address, teacherid) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING studentID;"
+        guardian_insert_query = "INSERT INTO GuardianSelection (guardianid, studentid) VALUES (%s, %s) RETURNING selectionID;"
+
+        conn.execute(student_insert_query, (studentname, classname, birthdate, attendance, healthstatus, address, teacherid))
         student_id = conn.fetchone()[0]
+
+        conn.execute(guardian_insert_query, (guardianid, student_id))
+        selection_id = conn.fetchone()[0]
 
         con.commit()
         return f"Student {student_id} registered successfully."

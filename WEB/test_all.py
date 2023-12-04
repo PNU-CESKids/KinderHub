@@ -219,7 +219,7 @@ def view_guardian(con, conn, student_id):
         return f"Error: {e}"
     finally:
         con.close()
-
+        
 # 하원 주체 선택
 def guardian_select(con, conn, user_id, student_id, selected_guardian):
     con, conn = connect_to_database()
@@ -229,8 +229,8 @@ def guardian_select(con, conn, user_id, student_id, selected_guardian):
         existing_entry = conn.fetchone()
 
         if existing_entry:
-            update_query = "UPDATE GuardianSelection SET guardianid = %s;"
-            conn.execute(update_query, (selected_guardian, ))
+            update_query = "UPDATE GuardianSelection SET guardianid = %s WHERE studentid = %s;"
+            conn.execute(update_query, (selected_guardian, student_id))
         else:
             insert_query = "INSERT INTO GuardianSelection (guardianid, studentid) VALUES (%s, %s);"
             conn.execute(insert_query, (selected_guardian, student_id))

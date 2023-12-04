@@ -197,6 +197,9 @@ def meals():
 
 @app.route('/schedule')
 def schedule():
+
+
+    
     return render_template('schedule.html')
 
 @app.route('/guardianselection', methods=['GET', 'POST'])

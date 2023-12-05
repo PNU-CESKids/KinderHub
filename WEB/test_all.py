@@ -147,10 +147,10 @@ def insert_chat(con, conn, user_id, receiver_id, message, image):
         return f"Error: {e}"
 
 # 스케줄 등록
-def set_schedule(con, conn, date, time, event_type, student_ids):
+def set_schedule(con, conn, date, time, event_type, description, student_ids):
     try:
-        query = "INSERT INTO Schedule (EventType, Date, Time) VALUES (%s, %s, %s) RETURNING ScheduleID;"
-        conn.execute(query, (event_type, date, time))
+        query = "INSERT INTO Schedule (EventType, Date, Time, Description) VALUES (%s, %s, %s, %s) RETURNING ScheduleID;"
+        conn.execute(query, (event_type, date, time, description))
         schedule_id = conn.fetchone()[0]
 
         for student_id in student_ids:
@@ -164,18 +164,34 @@ def set_schedule(con, conn, date, time, event_type, student_ids):
         return f"Error: {e}"
 
 # 스케줄 조회
-def view_schedule(con, conn, date=None):
+def view_schedule(con, conn, user_id):
     try:
-        if date:
-            query = "SELECT EventType, Date, Time FROM Schedule WHERE Date = %s;"
-            conn.execute(query, (date,))
-        else:
-            query = "SELECT EventType, Date, Time FROM Schedule;"
-            conn.execute(query)
+        # 사용자의 studentid 가져오기
+        query = "SELECT studentid FROM users WHERE userid = %s;"
+        conn.execute(query, (user_id,))
+        student_id = conn.fetchone()[0]
+
+        # 해당 학생의 스케줄 조회
+        query = "SELECT EventType, Date, Time, Description FROM Schedule s JOIN ScheduleStudent ss ON s.scheduleid = ss.scheduleid WHERE ss.studentid = %s;"
+        conn.execute(query, (student_id,))
         
         result = conn.fetchall()
+        con.commit()
         return result
     except Exception as e:
+        con.rollback()
+        return f"Error: {e}"
+
+# 모든 학생들의 이름 조회
+def all_students_name_info(con, conn):
+    try:
+        query = "SELECT studentid, studentname FROM Student;"
+        conn.execute(query)
+        result = conn.fetchall()
+        con.commit()
+        return result
+    except Exception as e:
+        con.rollback()
         return f"Error: {e}"
 
 # 하원 주체 선택 권한 부여

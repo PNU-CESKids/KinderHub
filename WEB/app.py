@@ -195,16 +195,36 @@ def meals():
     finally:
         close(con)
 
-@app.route('/schedule')
+# 스케줄 페이지
+@app.route('/schedule', methods=['GET', 'POST'])
 def schedule():
     con, conn = connect_to_database()
-
     try:
         today = datetime.now().date()
-        today_schedule = None
+        schedule = None
+        reg_schedule = None
 
-        today_schedule = view_schedule(con, conn, today)
-        return render_template('schedule.html', today=today, today_schedule=today_schedule)
+        if request.method == 'POST':
+            action = request.form.get('action')  # Use .get() for safe access
+
+            if action == 'register':
+                date = request.form.get('register_date')
+                time = request.form.get('register_time')
+                event_type = request.form.get('event_type')
+                description = request.form.get('description')
+                student_ids = request.form.getlist('student_ids')
+                numeric_ids = [int(student_id.split(',')[0]) for student_id in student_ids]
+
+                print(f"Form Data: Date={date}, Time={time}, Event Type={event_type}, Description={description}, Student IDs={numeric_ids}")
+
+                reg_schedule = set_schedule(con, conn, date, time, event_type, description, numeric_ids)
+
+        if 'user_id' in session:
+            user_id = session['user_id']
+            schedule = view_schedule(con, conn, user_id)
+            all_students_info = all_students_name_info(con, conn)
+
+        return render_template('schedule.html', today=today, schedule=schedule, reg_schedule=reg_schedule, all_students_info=all_students_info)
     except Exception as e:
         return render_template('error.html', error_message=f"Error: {e}")
     finally:

@@ -134,26 +134,29 @@ def view_chat(conn, user_id, user_role):
         users=view_user_info(conn, user_id)
         if users[1] == 'Teacher':
             query = """
-                SELECT chat.*, users.userrole
-                FROM chat
-                JOIN users ON chat.senderid = users.userid
-                WHERE chat.senderid = 10
-                OR chat.receiverid IN (
-                SELECT studentid
-                FROM student
-                WHERE teacherid = %s
-                );
+                SELECT chat.*, users.userrole,student.studentname
+FROM chat
+JOIN users ON chat.senderid = users.userid
+JOIN student ON chat.receiverid = student.studentid
+WHERE chat.senderid = %s
+   OR chat.receiverid IN (
+       SELECT studentid
+       FROM student
+       WHERE teacherid = %s
+   )
+ORDER BY chat.receiverid;
                 """
+            conn.execute(query, (user_id,user_id,))
         else:
             query = """
-                    SELECT chat.*, users.userrole
+                    SELECT chat.*, users.userrole, users.username
                     FROM chat
                     JOIN users ON chat.senderid = users.userid
                     WHERE chat.receiverid = (SELECT studentid from users where userid=%s);
                     """
-        conn.execute(query, (user_id,))
+            conn.execute(query, (user_id,))
+        
         result = conn.fetchall()
-
         return result
     except Exception as e:
         return f"Error: {e}"

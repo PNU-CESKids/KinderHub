@@ -69,6 +69,7 @@ def log_out(con, conn):
     return "Logout successful."
 
 # user 정보 조회
+'''
 def view_user_info(conn, user_id):
     try:
         query = "SELECT * FROM Users WHERE UserID = %s;"
@@ -77,6 +78,7 @@ def view_user_info(conn, user_id):
         return result
     except Exception as e:
         return f"Error: {e}"
+'''
 
 # user id로 username 찾기
 def get_user_name_by_id(con, user_id):
@@ -96,7 +98,7 @@ def view_user_info(conn, user_id):
     except Exception as e:
         return f"Error: {e}"
 
-# 원아 정보 조회
+# 원아 이름 조회
 def view_student_info(conn, user_id):
     try:
         query = "SELECT studentname FROM Student WHERE StudentID = (SELECT StudentID FROM Users WHERE UserID = %s);"
@@ -105,6 +107,25 @@ def view_student_info(conn, user_id):
         return result
     except Exception as e:
         return f"Error: {e}"
+
+# 원아 모든 정보 조회
+def view_student_all_info(con, conn, user_id):
+    con, conn = connect_to_database()
+    try:
+        query = "SELECT studentid FROM users WHERE userid = %s;"
+        conn.execute(query, (user_id,))
+        student_id = conn.fetchone()[0]
+
+        query = "SELECT studentid, studentname, classname, birthdate, attendance, healthstatus, address, teacherid FROM Student WHERE studentid = %s;"
+        conn.execute(query, (student_id,))
+        result = conn.fetchone()
+
+        con.commit()
+        return result
+    except Exception as e:
+        return f"Error: {e}"
+        
+        
 
 # 원아 정보 관리
 def manage_student_info(con, conn, user_id, attendance, health_status, address):
@@ -158,7 +179,7 @@ def set_schedule(con, conn, date, time, event_type, description, student_ids):
             conn.execute(query, (schedule_id, student_id))
 
         con.commit()
-        return f"Schedule added successfully. ScheduleID: {schedule_id}"
+        return f"Schedule added successfully. Last ScheduleID: {schedule_id}"
     except Exception as e:
         con.rollback()
         return f"Error: {e}"

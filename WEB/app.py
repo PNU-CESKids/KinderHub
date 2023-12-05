@@ -305,9 +305,27 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
 
-@app.route('/info')
-def info():
-    return render_template('info.html')
+@app.route('/info', methods=['GET', 'POST'])
+def info():        
+    if request.method == 'POST':
+        studentname = request.form['studentname']
+        classname = request.form['classname']
+        healthstatus = request.form['healthstatus']
+        address = request.form['address']
+        teacherid = request.form['teacherid']
+
+    try:
+        con, conn = connect_to_database()
+        if 'user_id' in session:
+            user_id = session['user_id']
+
+        user_info = view_user_info(conn, user_id)
+        student_info = view_student_all_info(con,conn, user_id)
+
+        return render_template('info.html', user_info=user_info, student_info=student_info)
+    except Exception as e:
+        return render_template('error.html', error_message=f"Error: {e}")
+
 
 @app.route('/registering', methods=['GET', 'POST'])
 def registering():

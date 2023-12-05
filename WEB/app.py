@@ -135,7 +135,7 @@ def notification():
         user_id = session['user_id']
         con, conn = connect_to_database()
         user_info = view_user_info(conn, int(user_id))
-        
+        students = get_student_info(conn,int(user_id))
         if user_info:
             user_role = user_info[1]
             student_id = user_info[2]
@@ -143,7 +143,7 @@ def notification():
         print("Error: please login")
 
     if user_role in ["Guardian", "Teacher"]:
-        chat_messages = view_chat(conn, student_id, user_role)
+        chat_messages = view_chat(conn, user_id, user_role)
     else:
         chat_messages = None
         print("권한 없음")
@@ -151,7 +151,7 @@ def notification():
     # Close the cursor
     con.close()
 
-    return render_template('notification.html', chat_messages=chat_messages,user_role=user_role)
+    return render_template('notification.html', chat_messages=chat_messages,user_role=user_role,students=students)
 
 
 @app.route('/notification/write', methods=['GET', 'POST'])

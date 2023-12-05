@@ -129,14 +129,29 @@ def manage_student_info(con, conn, user_id, attendance, health_status, address):
         return f"Error: {e}"
 
 # 알림장 조회
-def view_chat(conn, student_id, user_role):
+def view_chat(conn, user_id, user_role):
     try:
-        query = """
-                SELECT SenderID, ReceiverID, Message, TimeStamp, Image 
-                FROM Chat 
-                WHERE ReceiverID = %s;
+        users=view_user_info(conn, user_id)
+        if users[1] == 'Teacher':
+            query = """
+                SELECT chat.*, users.userrole
+                FROM chat
+                JOIN users ON chat.senderid = users.userid
+                WHERE chat.senderid = 10
+                OR chat.receiverid IN (
+                SELECT studentid
+                FROM student
+                WHERE teacherid = %s
+                );
                 """
-        conn.execute(query, (student_id,))
+        else:
+            query = """
+                    SELECT chat.*, users.userrole
+                    FROM chat
+                    JOIN users ON chat.senderid = users.userid
+                    WHERE chat.receiverid = (SELECT studentid from users where userid=%s);
+                    """
+        conn.execute(query, (user_id,))
         result = conn.fetchall()
 
         return result

@@ -9,9 +9,13 @@
     {% if chat_messages %}
     <h1>알림장 조회</h1>
     <ul>
-        {% for message in chat_messages %}
-            {{user_role}} : {{ message[2] }} <br>
-        {% endfor %}
+ 
+                {% for message in chat_messages %}
+                    {{message[6]}} : {{ message[3] }} 
+                <br>
+                {% endfor %}
+
+
         <p> 알림장 쓰러가기. <a href="{{ url_for('insert_chat_route') }}">알림장 쓰기</a>.</p>
     </ul>
     {% else %}

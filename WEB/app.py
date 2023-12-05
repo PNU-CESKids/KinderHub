@@ -197,10 +197,19 @@ def meals():
 
 @app.route('/schedule')
 def schedule():
+    con, conn = connect_to_database()
 
+    try:
+        today = datetime.now().date()
+        today_schedule = None
 
+        today_schedule = view_schedule(con, conn, today)
+        return render_template('schedule.html', today=today, today_schedule=today_schedule)
+    except Exception as e:
+        return render_template('error.html', error_message=f"Error: {e}")
+    finally:
+        close(con)
 
-    return render_template('schedule.html')
 
 @app.route('/guardianselection', methods=['GET', 'POST'])
 def guardianselection():

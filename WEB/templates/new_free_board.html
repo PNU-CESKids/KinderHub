@@ -5,7 +5,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create a New Free Board Post</title>
-    
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #ffee8b;
+        }
+
+        h1 {
+            margin-top: 100px;
+            color: #333;
+            text-align: center;
+        }
+
+        p {
+            color: #555;
+            text-align: center;
+        }
+
+        form {
+            max-width: 600px; /* Increased the max-width for better layout */
+            margin: 0 auto;
+            background-color: #ffceff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        /* Updated styles for title label and input */
+        label[for="title"] {
+            margin-top: 10px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px); /* Adjusted the width */
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical; /* Allow vertical resizing */
+        }
+
+        button {
+            background-color: #ffee8b;
+            color: #333;
+            padding: 10px 15px;
+            border: #3597ff;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-left: 250px;
+            padding-left: 30px;
+            padding-right: 30px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #ffee8b;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -18,10 +101,8 @@
         <label for="content">Content:</label>
         <textarea id="content" name="content" required></textarea><br>
 
-        <label for="image">Image (optional):</label>
-        <input type="file" id="image" name="image"><br>
-
-        <input type="submit" value="글 쓰기">
+        <!-- Use a button element instead of input -->
+        <button type="submit">글 쓰기</button>
     </form>
     <p> 글 조회 화면으로 돌아가기. <a href="{{ url_for('view_board') }}">글 목록</a>.</p>
 </body>

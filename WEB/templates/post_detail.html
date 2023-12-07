@@ -9,14 +9,14 @@
 
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background-color: #f5f5f5;
-            text-align: center;
+            background-color: #ffee8b; /* Changed background color */
             margin: 20px;
         }
 
         h1 {
-            color: #3498db;
+            color: #333; /* Changed title color */
             font-size: 32px;
+            text-align: center; /* Centered title */
         }
 
         p {
@@ -26,6 +26,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin: 10px 0;
             font-size: 18px;
+            color: #333; /* Changed text color */
         }
 
         img {
@@ -37,15 +38,20 @@
 
         form {
             margin-top: 20px;
+            display: flex;
+            flex-direction: row; /* Align elements horizontally */
+            align-items: center;
         }
 
         label {
             font-size: 18px;
             font-weight: bold;
             color: #3498db;
+            margin-right: 10px; /* Add margin to separate label and input */
         }
 
         input[type="text"] {
+            flex: 1; /* Expand to fill available space */
             padding: 8px;
             margin: 8px 0;
             border: 1px solid #3498db;
@@ -54,8 +60,7 @@
         }
 
         input[type="submit"] {
-            background-color: #2ecc71;
-            color: #fff;
+            background-color: #ffceff;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -64,7 +69,22 @@
         }
 
         input[type="submit"]:hover {
-            background-color: #27ae60;
+            background-color: #ffceff;
+        }
+
+        /* Additional styles for comments */
+        h2 {
+            margin-top: 20px; /* Added margin to separate Comments heading */
+        }
+
+        .comment {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            font-size: 16px;
+            color: #333;
         }
 
         /* Add more styles as needed */
@@ -76,24 +96,25 @@
     {% if 'error' in post_data %}
     <p>Error: {{ post_data['error'] }}</p>
     {% else %}
-    <p><strong>Title:</strong> {{ post_data['post_info'][0] }}</p>
+    <p><strong>Title: {{ post_data['post_info'][0] }}</strong></p>
     <p><strong>Content:</strong> {{ post_data['post_info'][1] }}</p>
     <p><strong>Timestamp:</strong> {{ post_data['post_info'][2] }}</p>
-    <p><strong>UserEmail:</strong> {{ post_data['post_info'][5] }}</p>
+    <p><strong>From </strong> {{ post_data['post_info'][5] }}</p>
 
-    <h2>Comments</h2>
+    <h2 style="text-align: center; margin-top: 30px;">Comments</h2>
     <form method="post" enctype="multipart/form-data">
-        <label for="commentcontent">your comment : </label>
-        <input type="text" id="commentcontent" name="commentcontent" required><br>
+        <label for="commentcontent">Your comment:</label>
+        <input type="text" id="commentcontent" name="commentcontent" required>
 
-        <input type="submit" value="댓글 입력">
+        <input type="submit" value="작성 완료하기" style="margin-left: 10px;">
     </form>
     {% for comment in post_data['comments'] %}
-    <p>
-        <strong>Commenter ID:</strong> {{ comment[2] }}<br>
-        <strong>User Email:</strong> {{ comment[5] }}<br>
-        <strong>Comment Content:</strong> {{ comment[3] }}<br>
-    </p>
+    <div class="comment">
+        <p>
+            <strong>Commenter :</strong> {{ comment[5] }}<br><br>
+            {{ comment[3] }}<br>
+        </p>
+    </div>
     {% endfor %}
     {% endif %}
 </body>

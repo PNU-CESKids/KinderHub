@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,19 +77,44 @@
         }
     </style>
 </head>
+
 <body>
     {% if chat_messages %}
-    <h1>Notifacation - 알림장</h1>
-    <ul style="margin-left: 100px; margin-right: 100px; width: calc(100% - 200px); padding: 30px; background-color: #FFFFE0;">
-        {% for message in chat_messages %}
-            {{user_role}} : {{ message[2] }}
+    <h1>알림장 조회</h1>
+    <ul>
+
+        {% if user_role == 'Teacher' %}
+    <!-- 현재 학생의 이름을 변수로 지정함 -->
+    {% set current_student = None %}
+
+    {% for message in chat_messages %}
+        {% if current_student != message[7] %}
+            {% set current_student = message[7] %}
+            {{ current_student }}
             <br>
+        {% endif %}
+        {{ message[6] }} : {{ message[3] }}
+        <br>
+        <br>
+    {% endfor %}
+    {% endif %}
+
+        <!--보호자 일 때-->
+        {%if user_role=='Guardian'%}
+        {% for message in chat_messages %}
+        {{message[6]}} : {{ message[3] }}
+        <br><br>
         {% endfor %}
+        {% endif %}
+   
+        <p> 알림장 쓰러가기. <a href="{{ url_for('insert_chat_route') }}">알림장 쓰기</a>.</p>
+
     </ul>
     <p></p>
     <p style="text-align: center;"><a href="{{ url_for('insert_chat_route') }}">Write the Notification</a></p>
     {% else %}
-        <p>{{ "Unauthorized. Only Guardian and Teacher can view chat messages for their students." }}</p>
+    <p>{{ "Unauthorized. Only Guardian and Teacher can view chat messages for their students." }}</p>
     {% endif %}
 </body>
+
 </html>

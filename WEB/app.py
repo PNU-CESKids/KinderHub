@@ -135,7 +135,7 @@ def notification():
         user_id = session['user_id']
         con, conn = connect_to_database()
         user_info = view_user_info(conn, int(user_id))
-        
+        students = get_student_info(conn,int(user_id))
         if user_info:
             user_role = user_info[1]
             student_id = user_info[2]
@@ -143,7 +143,7 @@ def notification():
         print("Error: please login")
 
     if user_role in ["Guardian", "Teacher"]:
-        chat_messages = view_chat(conn, student_id, user_role)
+        chat_messages = view_chat(conn, user_id, user_role)
     else:
         chat_messages = None
         print("권한 없음")
@@ -151,11 +151,48 @@ def notification():
     # Close the cursor
     con.close()
 
-    return render_template('notification.html', chat_messages=chat_messages,user_role=user_role)
+    return render_template('notification.html', chat_messages=chat_messages,user_role=user_role,students=students)
 
-@app.route('/notification/write')
+
+@app.route('/notification/write', methods=['GET', 'POST'])
 def insert_chat_route():
-    return render_template('write_notification.html')
+    if 'user_id' in session:
+        user_id = session['user_id']
+        con, conn = connect_to_database()
+        insert_messages = None
+        students= None
+        user_info = view_user_info(conn, int(user_id))
+        
+        if user_info:
+            user_role = user_info[1]
+            student_id = user_info[2]  # receiverid
+ 
+            if user_role in ["Guardian", "Teacher"]:
+                if user_role == "Teacher":
+                        students = get_student_info(conn,int(user_id))
+
+                if request.method == 'POST':
+                    message = request.form.get('message')
+                    image = request.form.get('image')  # Assuming image is obtained from the form
+
+                    if user_role == "Teacher":
+                        selected_student_id = request.form.get('selected_student_id')
+                        insert_messages = insert_chat(con, conn, user_id, selected_student_id, message, image)
+                    elif user_role == "Guardian":
+                        insert_messages = insert_chat(con, conn, user_id, student_id, message, image)
+                    
+                    # Additional logic or handling as needed
+                else:
+                    # Handle GET request or any additional logic if needed
+                    insert_messages = None
+            else:
+                print("권한 없음")
+    else:
+        # Handle the case when 'user_id' is not in session
+        return redirect('/login')  # Redirect to login page or handle accordingly
+
+    return render_template('write_notification.html', insert_messages=insert_messages, user_role=user_role, students=students)
+
 
 
 @app.route('/meals', methods=['GET', 'POST'])

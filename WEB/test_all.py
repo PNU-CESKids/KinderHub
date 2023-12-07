@@ -104,6 +104,7 @@ def view_student_info(conn, user_id):
     except Exception as e:
         return f"Error: {e}"
 
+
 # 원아 모든 정보 조회
 def view_student_all_info(con, conn, user_id):
     con, conn = connect_to_database()
@@ -122,6 +123,17 @@ def view_student_all_info(con, conn, user_id):
         return f"Error: {e}"
         
         
+def get_student_info(conn, user_id):
+    try:
+        query = "SELECT * FROM student WHERE teacherid = %s;"
+        conn.execute(query, (user_id,))
+        result = conn.fetchall()
+        print("result: " + str(result))
+        return result
+    except Exception as e:
+        return f"Error: {e}"
+
+
 
 # 원아 정보 관리
 def manage_student_info(con, conn, user_id, attendance, health_status, address):
@@ -135,16 +147,34 @@ def manage_student_info(con, conn, user_id, attendance, health_status, address):
         return f"Error: {e}"
 
 # 알림장 조회
-def view_chat(conn, student_id, user_role):
+def view_chat(conn, user_id, user_role):
     try:
-        query = """
-                SELECT SenderID, ReceiverID, Message, TimeStamp, Image 
-                FROM Chat 
-                WHERE ReceiverID = %s;
+        users=view_user_info(conn, user_id)
+        if users[1] == 'Teacher':
+            query = """
+                SELECT chat.*, users.userrole,student.studentname
+FROM chat
+JOIN users ON chat.senderid = users.userid
+JOIN student ON chat.receiverid = student.studentid
+WHERE chat.senderid = %s
+   OR chat.receiverid IN (
+       SELECT studentid
+       FROM student
+       WHERE teacherid = %s
+   )
+ORDER BY chat.receiverid;
                 """
-        conn.execute(query, (student_id,))
+            conn.execute(query, (user_id,user_id,))
+        else:
+            query = """
+                    SELECT chat.*, users.userrole, users.username
+                    FROM chat
+                    JOIN users ON chat.senderid = users.userid
+                    WHERE chat.receiverid = (SELECT studentid from users where userid=%s);
+                    """
+            conn.execute(query, (user_id,))
+        
         result = conn.fetchall()
-
         return result
     except Exception as e:
         return f"Error: {e}"

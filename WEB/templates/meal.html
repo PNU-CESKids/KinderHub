@@ -6,17 +6,24 @@
     <title>MealPlan</title>
     <style>
         body {
-            background-color: #f8f8f8;
-            color: #333;
-            font-family: 'Roboto', sans-serif;
-            margin: 20px;
+            background-color: #ffee8b;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
         }
-        h1, h2 {
+        h1 {
             color: #3e3e3e;
-            padding: 5px;
+            padding: 7px;
+        }
+        h2 {
+            color: #3e3e3e;
+            padding: 7px;
+            background-color: #ffceff;
+            text-align: center;
         }
         .container {
             display: flex;
@@ -25,10 +32,11 @@
             max-width: 1200px; 
         }
         .section {
+            background-color: white;
             flex: 1;
             margin: 20px;
             padding: 10px;
-            border: 5px solid #c0b9a5;
+            border: 5px solid #FFFFE0;
         }
         .container {
             display: flex;
@@ -53,14 +61,13 @@
         }
         button {
             padding: 10px;
-            background-color: #c0b9a5;
-            color: #fff;
+            background-color: #ffee8b;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #c0b9a5;
+            background-color: #ffee8b;
         }
     </style>
 </head>
@@ -89,9 +96,9 @@
 
             {% if other_days_meal %}
                 {% for meal in other_days_meal %}
-                    <p><strong>Meal 1:</strong> {{ meal[0] }}</p>
-                    <p><strong>Meal 1:</strong> {{ meal[1] }}</p>
-                    <p><strong>Meal 1:</strong> {{ meal[2] }}</p>
+                    <p><strong>Meal 1 :</strong> {{ meal[0] }}</p>
+                    <p><strong>Meal 2 :</strong> {{ meal[1] }}</p>
+                    <p><strong>Snack :</strong> {{ meal[2] }}</p>
                 {% endfor %}
             {% else %}
                 <p>No meal information available for the selected date.</p>

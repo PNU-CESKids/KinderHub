@@ -4,9 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #ffee8b;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        p {
+            color: #555;
+            text-align: center;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #ffceff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #ffee8b;
+            color: #333;
+            padding: 10px 15px;
+            border: #3597ff;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-left: 150px;
+            padding-left: 30px;
+            padding-right: 30px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #ffee8b;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            
+        }
+    </style>
 </head>
 <body>
-    <h1>학생 등록</h1>
+    <h1>Register New Student</h1>
 
     <form action="{{ url_for('student_registering') }}" method="post">
         <label for="studentname">Student Name:</label>

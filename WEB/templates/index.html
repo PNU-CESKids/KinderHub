@@ -7,24 +7,29 @@
     <title>Welcome to Kinder Hub</title>
     <style>
         body {
-            background-color: #FFD700; /* Set background color to yellow */
+            background-color: #ffee8b;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh; /* Make the body take up the full viewport height */
-            margin: 0; /* Remove default margin to center the content properly */
-            font-family: 'Arial', sans-serif; /* Change the font to Arial or any other preferred font */
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
         }
 
         h1, p, h2, ul {
-            text-align: center; /* Center-align text */
-            color: #333; /* Set text color to a dark shade for better contrast */
+            text-align: center;
+            color: #333;
         }
 
         ul {
-            padding: 0;
+            padding: 10px;
+            margin-left: 20px;
+            margin-right: 20px;
             list-style: none;
+            display: flex;
+            justify-content: center;
+            width: 100%;
         }
 
         li {
@@ -33,19 +38,19 @@
 
         a {
             text-decoration: none;
-            font-weight: bold; /* Make the text bold */
-            color: #0066cc; /* Set link color */
-            background-color: #FFFFE0; /* Set a lighter yellow background color */
-            padding: 10px 20px; /* Add padding to the buttons */
-            border-radius: 5px; /* Optional: Add border-radius for rounded corners */
-}
+            font-weight: bold; 
+            color: #0066cc; 
+            background-color: #FFFFE0; 
+            padding: 15px 30px;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
 
-        /* Add margin to create space between the elements */
         h1 {
             margin-bottom: 20px;
         }
 
-        /* Add margin to the login/register section */
         h2, ul {
             margin-top: 20px;
         }
@@ -53,11 +58,19 @@
 </head>
 <body>
     <h1>Kinder Hub</h1>
+    <p>Welcome to Kinder Hub</p>
     <ul>
-        <li><a href="{{ url_for('login') }}">Login</a></li>
-
-        <li><a href="{{ url_for('registering') }}">Register</a></li>
-        <!-- 다른 페이지로의 링크를 추가하세요 -->
+        <li><a href="{{ url_for('login') }}" id="button1">Login</a></li>
+        <a>    </a>
+        <li><a href="{{ url_for('registering') }}" id="button2">Register</a></li>
     </ul>
+    <script>
+        setTimeout(function() {
+            document.getElementById('button1').style.opacity = '1';
+        }, 500); 
+        setTimeout(function() {
+            document.getElementById('button2').style.opacity = '1';
+        }, 500); 
+    </script>
 </body>
 </html>

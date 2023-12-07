@@ -24,10 +24,6 @@ def close(connection):
     except Exception as e:
         print(f"Error closing connection: {e}")
 
-# password 유효성 검사
-def validate_password(self):
-    return len(self.password) >= 4
-
 # 사용자 등록
 def register(con, conn, user_name, user_email, user_pw, user_role, student_id):
     hashed_password = generate_password_hash(user_pw, method='pbkdf2:sha256')

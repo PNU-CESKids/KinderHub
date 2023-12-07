@@ -305,15 +305,8 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
 
-@app.route('/info', methods=['GET', 'POST'])
+@app.route('/info')
 def info():        
-    if request.method == 'POST':
-        studentname = request.form['studentname']
-        classname = request.form['classname']
-        healthstatus = request.form['healthstatus']
-        address = request.form['address']
-        teacherid = request.form['teacherid']
-
     try:
         con, conn = connect_to_database()
         if 'user_id' in session:
@@ -339,7 +332,7 @@ def registering():
         # Validate the form data (you can add more validation as needed)
         if not username or not useremail or not password or not role:
             return render_template('registering.html', error="All fields are required.")
-
+        
         # Process the user data and store it in the database
         try:
             con, conn = connect_to_database()
@@ -378,6 +371,7 @@ def student_registering():
 
         if not studentname or not classname or not birthdate or not attendance or not address or not teacherid:
             return render_template('student_registering.html', error="All fields are required.")
+
 
         try:
             con, conn = connect_to_database()

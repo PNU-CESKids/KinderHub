@@ -3,19 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>알림장 조회</title>
+    <title>알림장 쓰기</title>
+    <style>
+        body {
+            background-color: #ffee8b;
+            color: #333;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1, h2 {
+            color: #3e3e3e;
+            padding: 5px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        .section {
+            flex: 1;
+            margin: 20px;
+            padding: 10px;
+            border: 5px solid #c0b9a5;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #ffceff; /* 변경된 부분 */
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ffceff; /* 변경된 부분 */
+        }
+    </style>
 </head>
 <body>
-    {% if chat_messages %}
-    <h1>알림장 조회</h1>
-    <ul>
-        {% for message in chat_messages %}
-            {{user_role}} : {{ message[2] }}
-        {% endfor %}
-        <p> 알림장 쓰러가기. <a href="{{ url_for('insert_chat_route') }}">알림장 쓰기</a>.</p>
-    </ul>
-    {% else %}
-        <p>{{ "Unauthorized. Only Guardian and Teacher can view chat messages for their students." }}</p>
-    {% endif %}
+    <h1>Write the Notification - 알림장 </h1>
+    <form method="post" enctype="multipart/form-data">
+        
+        <label for="content">Content:</label>
+        <textarea id="content" name="content" required></textarea><br>
+
+        <input type="submit" value="글 쓰기">
+    </form>
+    <p> 알림장 조회 화면으로 돌아가기. <a href="{{ url_for('notification') }}">글 목록</a>.</p>
 </body>
 </html>

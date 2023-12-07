@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post Detail</title>
     <style>
-        /* Add this CSS style in the <head> section of your HTML or in a separate CSS file */
 
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
@@ -80,16 +79,6 @@
     <p><strong>Title:</strong> {{ post_data['post_info'][0] }}</p>
     <p><strong>Content:</strong> {{ post_data['post_info'][1] }}</p>
     <p><strong>Timestamp:</strong> {{ post_data['post_info'][2] }}</p>
-    <p><strong>Image:</strong>
-        {% if post_data['post_info'][3] is not none %}
-        <!-- Update this line in your post_detail.html -->
-        <!-- Update this line in your post_detail.html -->
-        <img src="data:image/jpeg;base64,{{ post_data['post_info'][3].tobytes().b64encode() }}" alt="Post Image">
-        {% else %}
-        <!-- Provide a default image or some indication that the image is not available -->
-        <img src="/static/default_image.jpg" alt="Default Image">
-        {% endif %}
-    </p>
     <p><strong>UserEmail:</strong> {{ post_data['post_info'][5] }}</p>
 
     <h2>Comments</h2>

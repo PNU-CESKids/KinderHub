@@ -20,8 +20,8 @@
 
 ## 팀 소개
 | 이름 | 김윤하(https://github.com/xdbsgk) | 구지원(https://github.com/kUZEEwon) |
-|:---:|:----------:|:----------:|
-|  | ![김윤하](https://github.com/xdbsgk.png) | ![구지원](https://github.com/kUZEEwon.png) |
+|:------:|:----------:|:----------:|
+|  | ![김윤하](https://github.com/xdbsgk.png){ width=100 } | ![구지원](https://github.com/kUZEEwon.png){ width=100 } |
 | 개발 내용 |  |  |
 
 

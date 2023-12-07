@@ -6,7 +6,7 @@ from test_all import *
 app = Flask(__name__)
 
 # Configure your database connection here
-DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/term"
+DATABASE_URI = "postgresql://db2023:db!2023@::1:5432/termkk"
 
 
 @app.route('/')
@@ -232,9 +232,41 @@ def meals():
     finally:
         close(con)
 
-@app.route('/schedule')
+# 스케줄 페이지
+@app.route('/schedule', methods=['GET', 'POST'])
 def schedule():
-    return render_template('schedule.html')
+    con, conn = connect_to_database()
+    try:
+        today = datetime.now().date()
+        schedule = None
+        reg_schedule = None
+
+        if request.method == 'POST':
+            action = request.form.get('action')  # Use .get() for safe access
+
+            if action == 'register':
+                date = request.form.get('register_date')
+                time = request.form.get('register_time')
+                event_type = request.form.get('event_type')
+                description = request.form.get('description')
+                student_ids = request.form.getlist('student_ids')
+                numeric_ids = [int(student_id.split(',')[0]) for student_id in student_ids]
+
+                print(f"Form Data: Date={date}, Time={time}, Event Type={event_type}, Description={description}, Student IDs={numeric_ids}")
+
+                reg_schedule = set_schedule(con, conn, date, time, event_type, description, numeric_ids)
+
+        if 'user_id' in session:
+            user_id = session['user_id']
+            schedule = view_schedule(con, conn, user_id)
+            all_students_info = all_students_name_info(con, conn)
+
+        return render_template('schedule.html', today=today, schedule=schedule, reg_schedule=reg_schedule, all_students_info=all_students_info)
+    except Exception as e:
+        return render_template('error.html', error_message=f"Error: {e}")
+    finally:
+        close(con)
+
 
 @app.route('/guardianselection', methods=['GET', 'POST'])
 def guardianselection():
@@ -245,45 +277,57 @@ def guardianselection():
         try:
             # Fetch user information
             user_info = view_user_info(conn, int(user_id))
+            
             if not user_info:
                 return render_template('error.html', error_message="User not found.")
 
             user_role = user_info[1]
             student_id = user_info[2]
-            print(f"User Data: user_role={user_role}, student_id={student_id}, user_id={user_id}")
-            # Fetch student information
-            student_info = view_student_info(conn, student_id)
-            if not student_info:
-                return render_template('error.html', error_message="Student not found.")
-
-            student_name = student_info[0]
-
-            guardian = view_guardian(con, conn, student_id)
-            if guardian:
-                guardian_id, guardian_name = guardian[0][0], guardian[0][1]
+            print(f"User Data: user_role={user_role}, user_id={user_id}")
 
             all_students_info = view_all_students_and_guardians(con, conn)
             print(all_students_info)
-
             grant_guardian_selection_permissions(con, conn, user_role)
 
-            if user_role == 'Guardian':
-                today_guardian = request.form.get('todayGuardian')
-                guardian_select_result = guardian_select(con, conn, int(user_id), student_id, today_guardian)
-                
-                if guardian_select_result.startswith("Guardian selection successful"):
-                    return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name,
-                                           student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
-                                           all_students_info=all_students_info, message="You can update or insert new Guardian.")
+            # 원장이 아닐 경우에만 Student 정보 포함된 것 전달
+            if student_id is not None: 
+                student_info = view_student_info(conn, student_id)
+                student_name = student_info[0]
+
+                guardian = view_guardian(con, conn, student_id)
+                if guardian:
+                    guardian_id, guardian_name = guardian[0][0], guardian[0][1]
+
+                if user_role == 'Guardian':
+                    today_guardian = request.form.get('todayGuardian')
+                    
+                    print(f"Before transaction - user_id: {user_id}, student_id: {student_id}, guardian: {guardian_id}")
+                    
+                    # today_guardian 값이 비어 있으면 함수 호출하지 않음
+                    if today_guardian:
+                        guardian_select_result = guardian_select(con, conn, int(user_id), student_id, today_guardian)
+                    
+                        if guardian_select_result.startswith("Guardian selection successful"):
+                            return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name,
+                                                student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
+                                                all_students_info=all_students_info, message="You can update or insert new Guardian.")
+                        else:
+                            return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
+                                                student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
+                                                all_students_info=all_students_info, message=f"Error: {guardian_select_result}")
+                    else:
+                        # today_guardian 값이 비어 있을 때의 처리
+                        return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
+                                               student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
+                                               all_students_info=all_students_info, message="Please enter a value before submitting.")
+
                 else:
                     return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
                                            student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
-                                           all_students_info=all_students_info, message=f"Error: {guardian_select_result}")
+                                           all_students_info=all_students_info, message="Unauthorized. Only guardians can perform guardian selection.")
 
-            else:
-                return render_template('guardianselection.html', user_id=user_id, user_role=user_role, guardian_id=guardian_id, guardian_name=guardian_name, 
-                                       student_id=student_id, student_name=student_name, user_info=user_info, student_info=student_info, 
-                                       all_students_info=all_students_info, message="Unauthorized. Only guardians can perform guardian selection.")
+            return render_template('guardianselection.html', user_id=user_id, user_role=user_role, user_info=user_info, 
+                                           all_students_info=all_students_info, message="Principal/OtherSchoolStaff/Teacher : 모든 학생 정보 출력.")
 
         except Exception as e:
             return render_template('error.html', error_message=f"Error: {e}")
@@ -299,8 +343,19 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/info')
-def info():
-    return render_template('info.html')
+def info():        
+    try:
+        con, conn = connect_to_database()
+        if 'user_id' in session:
+            user_id = session['user_id']
+
+        user_info = view_user_info(conn, user_id)
+        student_info = view_student_all_info(con,conn, user_id)
+
+        return render_template('info.html', user_info=user_info, student_info=student_info)
+    except Exception as e:
+        return render_template('error.html', error_message=f"Error: {e}")
+
 
 @app.route('/registering', methods=['GET', 'POST'])
 def registering():
@@ -312,28 +367,20 @@ def registering():
         student_id = request.form['student_id']
 
         # Validate the form data (you can add more validation as needed)
-        if not username or not useremail or not password or not role or not student_id:
+        if not username or not useremail or not password or not role:
             return render_template('registering.html', error="All fields are required.")
-
+        
         # Process the user data and store it in the database
         try:
-            # Establish a new database connection
             con, conn = connect_to_database()
 
-            # Print or log debug information
             print(f"Form Data: {username}, {useremail}, {password}, {role}, {student_id}")
             print(f"Database Connection: {conn}")
 
-            # Assuming 'conn' is your database connection
             result = register(con, conn, username, useremail, password, role, student_id)
-
-            # Print or log the result of the registration
             print(f"Registration Result: {result}")
-
-            # Close the connection after the operation
             conn.close()
 
-            # Redirect to the dashboard or login page after a successful registration
             return redirect(url_for('index'))
         except Exception as e:
             session.clear()
@@ -343,6 +390,43 @@ def registering():
 
     # If it's a GET request, simply render the template
     return render_template('registering.html')
+
+@app.route('/student_registering', methods=['GET', 'POST'])
+def student_registering():
+    if request.method == 'POST':
+        # Retrieve form data
+        studentname = request.form['studentname']
+        classname = request.form['classname']
+        birthdate = request.form['birthdate']
+        attendance = request.form['attendance']
+        healthstatus = request.form.get('healthstatus') == 'on'  # Convert checkbox value to boolean
+        address = request.form['address']
+        teacherid = request.form['teacherid']
+        # default gaurdian = 원장 자신으로 설정, 즉, user_id로!
+        if 'user_id' in session:
+            user_id = session['user_id']
+
+        if not studentname or not classname or not birthdate or not attendance or not address or not teacherid:
+            return render_template('student_registering.html', error="All fields are required.")
+
+
+        try:
+            con, conn = connect_to_database()
+
+            # Call the registration function
+            result = register_stud(con, conn, studentname, classname, birthdate, attendance, healthstatus, address, teacherid, user_id)
+            
+            return render_template('student_registering.html', success=result)
+
+        except Exception as e:
+            print(f"Error during student registration: {e}")
+            return render_template('student_registering.html', error=f"Student Registration failed: {str(e)}")
+
+        finally:
+            close(con)
+
+    return render_template('student_registering.html')
+
 
 if __name__ == '__main__':
     app.secret_key = 'your_secret_key'

@@ -5,6 +5,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>알림장 조회</title>
+    <style>
+        body {
+            background-color: #ffee8b;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        h1, p, h2, ul {
+            color: #333;
+        }
+
+        ul {
+            padding: 10px;
+            margin-left: 20px;
+            margin-right: 20px;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        li {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            font-weight: bold; 
+            color: #0066cc; 
+            background-color: #FFFFE0; 
+            padding: 15px 30px;
+            border-radius: 20px;
+            flex: 2; /* Adjust the width as needed */
+        }
+
+        form {
+            flex: 1; /* Adjust the width as needed */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+            margin: 50px;
+        }
+
+        button {
+            background-color: #ffceff;
+            color: #333;
+            padding: 10px 15px;
+            border: #3597ff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #ffceff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            
+        }
+    </style>
 </head>
 
 <body>
@@ -35,9 +106,12 @@
         <br><br>
         {% endfor %}
         {% endif %}
-
+   
         <p> 알림장 쓰러가기. <a href="{{ url_for('insert_chat_route') }}">알림장 쓰기</a>.</p>
+
     </ul>
+    <p></p>
+    <p style="text-align: center;"><a href="{{ url_for('insert_chat_route') }}">Write the Notification</a></p>
     {% else %}
     <p>{{ "Unauthorized. Only Guardian and Teacher can view chat messages for their students." }}</p>
     {% endif %}

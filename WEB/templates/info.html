@@ -4,9 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>       
+        body {
+            background-color: #ffee8b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        h1 {
+            color: #3e3e3e;
+            padding: 7px;
+        }
+        h2 {
+            color: #3e3e3e;
+            padding: 7px;
+            background-color: #ffceff;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        .section {
+            background-color: white;
+            flex: 1;
+            margin: 20px;
+            padding: 10px;
+            border: 5px solid #FFFFE0;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #ffee8b;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ffee8b;
+        }
+    </style>
 </head>
 <body>
-    <h1>내 정보 / 아이 정보</h1>
-    
+    <div class="container">
+        
+        <div class="section">
+            <h2>My Information</h2>
+            <p>Name : {{ user_info[0] }}</p>
+            <p>Role : {{ user_info[1] }}</p>
+            <p>Email: {{ user_info[3] }}</p>
+        </div>
+
+        <div class="section">
+            <h2>Child Information</h2>
+            <p>Child ID: {{ student_info[0] }}</p>
+            <p>Name : {{ student_info[1] }}</p>
+            <p>Class : {{ student_info[2] }}</p>
+            <p>Birth Date : {{ student_info[3] }}</p>
+            <p>Attendance : {{ student_info[4] }}</p>
+            <p>Health Status : {{ student_info[5] }}</p>
+            <p>Address : {{ student_info[6] }}</p>
+            <p>Teacher ID : {{ student_info[7] }}</p>
+        </div>
+    </div>
 </body>
 </html>

@@ -7,46 +7,77 @@
     <title>Free Board</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f6f6f6;
-            text-align: center;
-            margin: 20px;
+            background-color: #ffee8b;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
         }
 
-        h1 {
-            color: #3498db;
+        h1, p, h2, ul {
+            color: #333;
         }
 
-        p {
-            background-color: #fff;
+        ul {
             padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 10px 0;
+            margin-left: 20px;
+            margin-right: 20px;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        li {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
         }
 
         a {
-            color: #3498db;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: bold; 
+            color: #0066cc; 
+            background-color: #FFFFE0; 
+            padding: 15px 30px;
+            border-radius: 20px;
+            flex: 2; /* Adjust the width as needed */
         }
 
-        a:hover {
-            color: #2078b5;
+        form {
+            flex: 1; /* Adjust the width as needed */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+            margin: 50px;
+        }
+
+        h2, ul {
+            background-color: #333;
         }
 
         button {
-            background-color: #2ecc71;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            background-color: #ffceff;
+            color: #333;
+            padding: 10px 15px;
+            border: #3597ff;
+            border-radius: 20px;
             cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
         }
 
         button:hover {
-            background-color: #27ae60;
+            background-color: #ffceff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            
         }
     </style>
 </head>
@@ -54,25 +85,26 @@
 <body>
     <h1>Free Board</h1>
 
-    {% for post in posts %}
-        <div>
-            <p><strong>PostID:</strong> {{ post[0] }}</p>
-            <p><strong>Title:</strong> <a href="{{ url_for('view_post_route', post_id=post[0]) }}">{{ post[1] }}</a></p>
+    <ul style="margin-left: 100px; margin-right: 100px; width: calc(100% - 200px); padding: 30px;">
+        {% for post in posts %}
+            <li style="margin-bottom: 30px; display: flex; justify-content: space-between; width: 100%;">
+                <p><a href="{{ url_for('view_post_route', post_id=post[0]) }}">{{ post[0] }}. {{ post[1] }}</a></p>
 
-            <!-- Display the content, timestamp, and other details as needed -->
-
-            <!-- Form to delete the post -->
-            <form method="post" action="{{ url_for('delete_post') }}">
-                <!-- Add a hidden input field to store the post ID -->
-                <input type="hidden" name="post_id" value="{{ post[0] }}">
-                <button type="submit">Delete</button>
-            </form>
-        </div>
-    {% endfor %}
+                <form method="post" action="{{ url_for('delete_post') }}">
+                    <input type="hidden" name="post_id" value="{{ post[0] }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
     <br>
-    <!-- Add the button for creating a new post -->
-    <a href="{{ url_for('post_board') }}"><button>Create New Post</button></a>
+    <div style="display: flex; justify-content: center; margin-top: 20px;">
+        <a href="{{ url_for('post_board') }}" style="background-color: #ffee8b; border-radius: 20px; padding: 15px 30px; text-align: center; text-decoration: none;">
+            <button style="padding: 20px;">Create New Post</button></a>
+    </div>
+    <h1></h1>
 </body>
+
 
 
 </html>

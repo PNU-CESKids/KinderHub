@@ -3,9 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Student Schedule</title>
+    <style>
+        body {
+            background-color: #ffee8b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        h1 {
+            color: #3e3e3e;
+            padding: 7px;
+        }
+        h2 {
+            color: #3e3e3e;
+            padding: 7px;
+            background-color: #ffceff;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        .section {
+            background-color: white;
+            flex: 1;
+            margin: 20px;
+            padding: 10px;
+            border: 5px solid #FFFFE0;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px; 
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #ffee8b;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ffee8b;
+        }
+    </style>
 </head>
 <body>
-    <h1>Student schedule</h1>
+    <h1>Student Schedule</h1>
+    <div class="container">
+
+        <div class="section">
+            <h2>우리 아이 일정</h2>
+            {% if schedule %}
+                {% for event in schedule %}
+                    <p>{{ event[0] }} - Date: {{ event[1] }}, Time: {{ event[2] }}, 설명: {{ event[3] }}</p>
+                {% endfor %}
+            {% else %}
+                <p>No events scheduled.</p>
+            {% endif %}
+        </div>
+
+        <div class="section">
+            <h2>스케줄 등록</h2>
+            
+                <form method="post" action="{{ url_for('schedule') }}">
+                    <label for="register_date"><strong>Date:</strong></label>
+                    <input type="text" id="register_date" name="register_date" required>
+    
+                    <label for="register_time"><strong>Time:</strong></label>
+                    <input type="text" id="register_time" name="register_time" required>
+
+                    <label for="event_type">스케줄 이름: </label>
+                    <input type="text" id="event_type" name="event_type" required>
+
+                    <label for="description">설명: </label>
+                    <input type="text" id="description" name="description">
+
+                    <label for="student_ids"><strong>Select Students:</strong></label>
+                    <select multiple id="student_ids" name="student_ids">
+                        {% for student in all_students_info %}
+                            <option value="{{ student[0] }}, {{ student[1] }}">{{ student[0] }}, {{ student[1] }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit" name="action" value="register">등록하기</button>
+                </form>
+
+                {% if reg_schedule %}
+                    <p><strong>{{ reg_schedule }}</strong></p>
+                {% endif %}
+        </div>
+    </div>
+    
+
 </body>
 </html>

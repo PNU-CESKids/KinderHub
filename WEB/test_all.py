@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Connect to Database
 def connect_to_database():
     con = psycopg2.connect(
-        database='term',
+        database='termkk',
         user='db2023',
         password='db!2023',
         host='::1',
@@ -24,17 +24,16 @@ def close(connection):
     except Exception as e:
         print(f"Error closing connection: {e}")
 
-
-# password 유효성 검사
-def validate_password(self):
-    return len(self.password) >= 4
-
 # 사용자 등록
 def register(con, conn, user_name, user_email, user_pw, user_role, student_id):
     hashed_password = generate_password_hash(user_pw, method='pbkdf2:sha256')
     try:
         # Insert into Users table
         user_insert_query = "INSERT INTO Users (UserName, UserRole, StudentID, UserPassword, UserEmail) VALUES (%s, %s, %s, %s, %s) RETURNING UserID;"
+        
+        if not student_id and user_role in ('Principal', 'Teacher', 'OtherSchoolStaff'):
+            student_id = None
+
         conn.execute(user_insert_query, (user_name, user_role, student_id, hashed_password, user_email))
         user_id = conn.fetchone()[0]
 
@@ -60,14 +59,13 @@ def log_in(con, conn, user_email, user_pw):
     except Exception as e:
         return None  # Handle the exception or log it, return None for simplicity
 
-
 # 로그아웃
 def log_out(con, conn):
     con.close()
     return "Logout successful."
 
-
 # user 정보 조회
+'''
 def view_user_info(conn, user_id):
     try:
         query = "SELECT * FROM Users WHERE UserID = %s;"
@@ -76,6 +74,7 @@ def view_user_info(conn, user_id):
         return result
     except Exception as e:
         return f"Error: {e}"
+'''
 
 # user id로 username 찾기
 def get_user_name_by_id(con, user_id):
@@ -95,8 +94,7 @@ def view_user_info(conn, user_id):
     except Exception as e:
         return f"Error: {e}"
 
-
-# 원아 정보 조회
+# 원아 이름 조회
 def view_student_info(conn, user_id):
     try:
         query = "SELECT studentname FROM Student WHERE StudentID = (SELECT StudentID FROM Users WHERE UserID = %s);"
@@ -106,6 +104,25 @@ def view_student_info(conn, user_id):
     except Exception as e:
         return f"Error: {e}"
 
+
+# 원아 모든 정보 조회
+def view_student_all_info(con, conn, user_id):
+    con, conn = connect_to_database()
+    try:
+        query = "SELECT studentid FROM users WHERE userid = %s;"
+        conn.execute(query, (user_id,))
+        student_id = conn.fetchone()[0]
+
+        query = "SELECT studentid, studentname, classname, birthdate, attendance, healthstatus, address, teacherid FROM Student WHERE studentid = %s;"
+        conn.execute(query, (student_id,))
+        result = conn.fetchone()
+
+        con.commit()
+        return result
+    except Exception as e:
+        return f"Error: {e}"
+        
+        
 def get_student_info(conn, user_id):
     try:
         query = "SELECT * FROM student WHERE teacherid = %s;"
@@ -115,6 +132,7 @@ def get_student_info(conn, user_id):
         return result
     except Exception as e:
         return f"Error: {e}"
+
 
 
 # 원아 정보 관리
@@ -163,7 +181,6 @@ ORDER BY chat.receiverid;
     else:
         return "Unauthorized. Only Guardian and Teacher can view chat messages."
 
-
 # 알림장 작성
 def insert_chat(con, conn, user_id, receiver_id, message, image):
     try:
@@ -177,10 +194,10 @@ def insert_chat(con, conn, user_id, receiver_id, message, image):
         return f"Error: {e}"
 
 # 스케줄 등록
-def set_schedule(con, conn, date, time, event_type, student_ids):
+def set_schedule(con, conn, date, time, event_type, description, student_ids):
     try:
-        query = "INSERT INTO Schedule (EventType, Date, Time) VALUES (%s, %s, %s) RETURNING ScheduleID;"
-        conn.execute(query, (event_type, date, time))
+        query = "INSERT INTO Schedule (EventType, Date, Time, Description) VALUES (%s, %s, %s, %s) RETURNING ScheduleID;"
+        conn.execute(query, (event_type, date, time, description))
         schedule_id = conn.fetchone()[0]
 
         for student_id in student_ids:
@@ -188,24 +205,40 @@ def set_schedule(con, conn, date, time, event_type, student_ids):
             conn.execute(query, (schedule_id, student_id))
 
         con.commit()
-        return f"Schedule added successfully. ScheduleID: {schedule_id}"
+        return f"Schedule added successfully. Last ScheduleID: {schedule_id}"
     except Exception as e:
         con.rollback()
         return f"Error: {e}"
 
 # 스케줄 조회
-def view_schedule(con, conn, date=None):
+def view_schedule(con, conn, user_id):
     try:
-        if date:
-            query = "SELECT EventType, Date, Time FROM Schedule WHERE Date = %s;"
-            conn.execute(query, (date,))
-        else:
-            query = "SELECT EventType, Date, Time FROM Schedule;"
-            conn.execute(query)
+        # 사용자의 studentid 가져오기
+        query = "SELECT studentid FROM users WHERE userid = %s;"
+        conn.execute(query, (user_id,))
+        student_id = conn.fetchone()[0]
+
+        # 해당 학생의 스케줄 조회
+        query = "SELECT EventType, Date, Time, Description FROM Schedule s JOIN ScheduleStudent ss ON s.scheduleid = ss.scheduleid WHERE ss.studentid = %s;"
+        conn.execute(query, (student_id,))
         
         result = conn.fetchall()
+        con.commit()
         return result
     except Exception as e:
+        con.rollback()
+        return f"Error: {e}"
+
+# 모든 학생들의 이름 조회
+def all_students_name_info(con, conn):
+    try:
+        query = "SELECT studentid, studentname FROM Student;"
+        conn.execute(query)
+        result = conn.fetchall()
+        con.commit()
+        return result
+    except Exception as e:
+        con.rollback()
         return f"Error: {e}"
 
 # 하원 주체 선택 권한 부여
@@ -221,6 +254,8 @@ def grant_guardian_selection_permissions(con, conn, user_role):
         conn.execute(f"GRANT SELECT ON guardianselection TO {user_role};")
         if write_permission == 'O':
             con.execute(f"GRANT INSERT, UPDATE, DELETE ON guardianselection TO {user_role};")
+        print(f"after(1) transaction - user_role: {user_role}")
+        con.commit()
     except Exception as e:
         con.rollback()
         return f"Error: {e}"
@@ -239,13 +274,14 @@ def view_guardian(con, conn, student_id):
         """
         conn.execute(query, (student_id,))
         result = conn.fetchall()
+        print(f"after(2) transaction - student_id: {student_id}")
+        con.commit()
         return result
     except Exception as e:
         con.rollback()
         return f"Error: {e}"
     finally:
         con.close()
-
 
 # 하원 주체 선택
 def guardian_select(con, conn, user_id, student_id, selected_guardian):
@@ -256,11 +292,12 @@ def guardian_select(con, conn, user_id, student_id, selected_guardian):
         existing_entry = conn.fetchone()
 
         if existing_entry:
-            update_query = "UPDATE GuardianSelection SET guardianid = %s;"
-            conn.execute(update_query, (selected_guardian, ))
+            update_query = "UPDATE GuardianSelection SET guardianid = %s WHERE studentid = %s;"
+            conn.execute(update_query, (selected_guardian, student_id))
         else:
             insert_query = "INSERT INTO GuardianSelection (guardianid, studentid) VALUES (%s, %s);"
             conn.execute(insert_query, (selected_guardian, student_id))
+        print(f"after(3) transaction - user_id: {user_id}, student_id: {student_id}, selected_guardian: {selected_guardian}")
         con.commit()
         return "Guardian selection successful."
     except Exception as e:
@@ -268,8 +305,6 @@ def guardian_select(con, conn, user_id, student_id, selected_guardian):
         return f"Error: {e}"
     finally:
         con.close()
-
-
 
 # 선생님, 원장, 스탭들이 모든 학생들의 하원 주체 확인
 def view_all_students_and_guardians(con, conn):
@@ -290,6 +325,7 @@ def view_all_students_and_guardians(con, conn):
         """
         conn.execute(query)
         result = conn.fetchall()
+        con.commit()
         return result
     except Exception as e:
         con.rollback()
@@ -313,7 +349,6 @@ def post_free_board(con, title, content, poster_id, image):
         print(f"Error: Unable to create post\n{e}")
     finally:
         con.close()  # Close the connection here
-
 
 def get_comments_by_postid(postid):
     con, conn = connect_to_database()
@@ -368,7 +403,6 @@ def view_post(con, conn, post_id):
         return {"post_info": post_info, "comments": comments}
     except Exception as e:
         return {"error": f"Error: {e}"}
-
 
 # 게시판 글에 댓글 등록 함수
 def write_post_comment(con, conn, post_id, commenter_id, comment_content):
@@ -486,7 +520,27 @@ def view_other_days_meal(con, conn, date):
     except Exception as e:
         return f"Error: {e}"
 
+# 학생 등록 함수
+def register_stud(con, conn, studentname, classname, birthdate, attendance, healthstatus, address, teacherid, guardianid):
+    try:
+        student_insert_query = "INSERT INTO Student (studentname, classname, birthdate, attendance, healthstatus, address, teacherid) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING studentID;"
+        guardian_insert_query = "INSERT INTO GuardianSelection (guardianid, studentid) VALUES (%s, %s) RETURNING selectionID;"
 
+        conn.execute(student_insert_query, (studentname, classname, birthdate, attendance, healthstatus, address, teacherid))
+        student_id = conn.fetchone()[0]
+
+        conn.execute(guardian_insert_query, (guardianid, student_id))
+        selection_id = conn.fetchone()[0]
+
+        con.commit()
+        return f"Student {student_id} registered successfully."
+    
+    except Exception as e:
+        con.rollback()
+        return f"Error during student registration: {e}"
+    
+    finally:
+        close(con)
 
 def main():
     con, conn = connect_to_database()

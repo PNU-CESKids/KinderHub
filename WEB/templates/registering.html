@@ -6,6 +6,85 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Registration</title>
+    <script>
+        function toggleStudentIdField() {
+            var roleSelect = document.getElementById("role");
+            var studentIdField = document.getElementById("student_id");
+            var selectedRole = roleSelect.value;
+            var requiresStudentId = selectedRole === "StudentsFamily" || selectedRole === "Guardian";
+            studentIdField.required = requiresStudentId;
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #ffee8b;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        p {
+            color: #555;
+            text-align: center;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #ffceff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #ffee8b;
+            color: #333;
+            padding: 10px 15px;
+            border: #3597ff;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-left: 150px;
+            padding-left: 30px;
+            padding-right: 30px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #ffee8b;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            
+        }
+    </style>
 </head>
 <body>
     <h1>User Registration</h1>
@@ -25,19 +104,17 @@
         <br>
 
         <label for="role">Role:</label>
-        <select id="role" name="role" required>
+        <select id="role" name="role" required onchange="toggleStudentIdField()">
             <option value="Principal">Principal</option>
             <option value="Teacher">Teacher</option>
-            <option value="Student">Student</option>
             <option value="Guardian">Guardian</option>
             <option value="OtherSchoolStaff">OtherSchoolStaff</option>
             <option value="StudentsFamily">Students Family</option>
-            <!-- Add other roles as needed -->
         </select>
         <br>
         
         <label for="student_id">Student ID:</label>
-        <input type="text" id="student_id" name="student_id" required>
+        <input type="text" id="student_id" name="student_id">
         <br>
 
         <button type="submit">Register</button>

@@ -7,31 +7,79 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>대시보드</title>
+    <style>
+        body {
+            background-color: #ffee8b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        h1, p, h2, ul {
+            text-align: center;
+            color: #333;
+        }
+
+        ul {
+            padding: 10px;
+            margin-left: 20px;
+            margin-right: 20px;
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        li {
+            margin-bottom: 30px;
+        }
+
+        a {
+            text-decoration: none;
+            font-weight: bold; 
+            color: #0066cc; 
+            background-color: #FFFFE0; 
+            padding: 15px 30px;
+            border-radius: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        h2, ul {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body>
+    <h3>Welcome, {{ user_name }}! Your Role : {{ user_role }}</h3>
     <h1>MENU</h1>
-    <h2>{{ user_name }}님 환영합니다!</h2>
-    <h5>역할 : {{ user_role }}</h5>
-    <!-- Add your dashboard content here -->
-
+    <a href="{{ url_for('info') }}">My Information/Child Information</a>
+    <br>
+    <a href="{{ url_for('view_board') }}">Board</a>
+    <br>
+    <a href="{{ url_for('meals') }}">Meal Plan</a>
+    <br>
+    <a href="{{ url_for('notification') }}">Notification</a>
+    <br>
+    <a href="{{ url_for('schedule') }}">Schedule</a>
+    <br>
+    <a href="{{ url_for('guardianselection') }}">Safe School Service</a>
+    <br>
+    <a href="{{ url_for('logout') }}">Logout</a>
     <br>
 
-    <!-- Add links to other menus -->
-    <a href="{{ url_for('info') }}">나의 정보/아이 정보</a>
-    <br>
-    <a href="{{ url_for('view_board') }}">게시판</a>
-    <br>
-    <a href="{{ url_for('meals') }}">식단표 보기</a>
-    <br>
-    <a href="{{ url_for('notification') }}">알림장</a>
-    <br>
-    <a href="{{ url_for('schedule') }}">스케줄</a>
-    <br>
-    <a href="{{ url_for('guardianselection') }}">안심하원서비스</a>
-    <br>
-    <a href="{{ url_for('logout') }}">로그아웃</a>
-
+    <!-- user_role이 원장인 경우에만 학생 등록 페이지 표시됨. -->
+    {% if user_role not in ['Teacher', 'OtherSchoolStaff', 'Guardian', 'StudentsFamily', 'Student'] %}
+        <a href="{{ url_for('student_registering') }}">Register New Student</a>
+        <br>
+    {% endif %}
 </body>
 
 </html>

@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Connect to Database
 def connect_to_database():
     con = psycopg2.connect(
-        database='termkk',
+        database='term',
         user='db2023',
         password='db!2023',
         host='::1',
@@ -418,7 +418,7 @@ def write_post_comment(con, conn, post_id, commenter_id, comment_content):
 # 자유게시판 보기 함수
 def view_free_board(conn):
     try:
-        query = "SELECT PostID, Title FROM FreeBoardQA;"
+        query = "SELECT PostID, Title, PosterID FROM FreeBoardQA;"
         conn.execute(query)
         result = conn.fetchall()
         return result

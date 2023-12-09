@@ -58,3 +58,23 @@
 ```
 
 ## 설치 및 사용법
+
+## 데이터베이스 연결 및 각 테이블 초기 설정
+
+### 1. Create New Database
+
+- 데이터베이스 강의에서 사용한 기존의 ts_db2023의 TABLESPACE에 새로운 DATABASE를 생성해준다.
+    
+    ```sql
+    postgres=# CREATE DATABASE termkk OWNER db2023 TABLESPACE ts_db2023;
+    CREATE DATABASE
+    ```
+    
+
+### 2. 테스트에 필요한 테이블 및 데이터 추가
+
+- **termkk_backup.sql**을 다운받고, 다음과 같은 명령어를 실행시켜 데이터베이스의 구조와 데이터를 저장시킨다.
+    
+    ```sql
+    psql -U db2023 -h localhost -d termkk < termkk_backup.sql
+    ```

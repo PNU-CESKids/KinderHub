@@ -128,11 +128,11 @@
 
 <br>
 
-- **Register New Student
+- **Register New Student**
   
 | 기능                        | 설명                                           | 화면                                            |
 | --------------------------- | ---------------------------------------------- | ----------------------------------------------- |
-| **Principal's dashboard    |Principal은 Register New Student을 통해 학생 등록이 가능하다.|<img width="1470" alt="Untitled 6" src="https://github.com/PNU-CESKids/KinderHub/assets/98088494/c31b9c2a-8226-46df-a347-5f8fe6356b0d">                                         |
+| **Principal's dashboard**    |Principal은 Register New Student을 통해 학생 등록이 가능하다.|<img width="1470" alt="Untitled 6" src="https://github.com/PNU-CESKids/KinderHub/assets/98088494/c31b9c2a-8226-46df-a347-5f8fe6356b0d">                                         |
 |    **학생 등록 화면**            | 학생 정보를 입력하고 학생을 등록할 수 있다.                |<img width="1469" alt="Untitled 7" src="https://github.com/PNU-CESKids/KinderHub/assets/98088494/9f19aa66-7355-4f02-9a17-07832fbeb2ff">                                |
 
 <br>

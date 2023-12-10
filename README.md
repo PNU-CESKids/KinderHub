@@ -165,7 +165,7 @@ index.html
     - 자신의 정보와 자신에게 속한 `Student`정보를 확인할 수 있다.
 - **Board(게시판)**
     
-    ![board.html(Free Board)](Readme%20%E1%84%8C%E1%85%A1%E1%86%A8%E1%84%89%E1%85%A5%E1%86%BC%2008653c46383f477ab7a16baaafbfdbe6/Untitled%207.png)
+    ![board.html(Free Board)](Report/imgs/Untitled%207.png)
     
     board.html(Free Board)
     

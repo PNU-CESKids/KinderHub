@@ -109,214 +109,89 @@
 
 [https://127.0.0.1:5000/](https://127.0.0.1:5000) 으로 접속하면 아래와 같은 화면이 나온다.
 
-![index.html](Report/imgs/Untitled%201.png)
+| 기능            | 설명               | 화면                                     |
+| ----------------------------- | ----------------------------- | ---------------------------------------- |
+| **초기 화면**    | index.html      | ![index.html](Report/imgs/Untitled%201.png) |
+|                |                | 자신의 계정이 있으면 login 버튼을 눌러 로그인을 진행하고, 계정이 없으면 register 버튼을 눌러 회원 가입을 한다. |
+| **회원가입**     | 회원가입 화면     | ![registering.html](Report/imgs/Untitled%202.png) |
+|                |               | - `Student`는 회원가입을 진행할 수 없다. 완료 후 [Login here](http://127.0.0.1:5000/login)을 눌러 로그인을 진행한다. |  
+|                |               | - 자신의 역할이 `Teacher` 이거나 `OtherSchoolStep` 또는 `Principal` 일 때는 제일 하단의 studentID를 입력하지 않아도 된다. |
+|                |               | register 버튼을 누르면 회원가입이 완료 된다. |
+|                |               | - 완료 후 [Login here](http://127.0.0.1:5000/login)을 눌러 로그인을 진행한다. |  
+| **로그인**       | 로그인 화면       | ![login.html](Report/imgs/Untitled%203.png) 자신의 Email, Password를 입력해서 로그인을 한다. |
+| **로그인 실패**  | 실패 화면          | ![로그인 실패화면](Report/imgs/Untitled%204.png) Email 이나 Password를 잘못 입력하여 로그인에 실패하면 이러한 문구가 나온다. |
+| **대시보드**     | 대시보드 화면     | ![dashboard.html](Report/imgs/Untitled%205.png) 원하는 기능을 메뉴에서 선택해서 들어갈 수 있다. |
+| **로그아웃**     | 로그아웃 버튼     | 하단의 ‘Logout’버튼을 눌러 로그아웃을 할 수 있다.                                            |
 
-index.html
-
-자신의 계정이 있으면 login 버튼을 눌러 로그인을 진행하고, 계정이 없으면 register 버튼을 눌러 회원 가입을 한다.
-
-**로그인 이전**
-
-- **회원가입(계정이 없는 경우)**
-    
-    ![registering.html](Report/imgs/Untitled%202.png)
-    
-    registering.html
-    
-    - `Student`는 회원가입을 진행할 수 없다.
-    - 자신의 역할이 `Teacher` 이거나 `OtherSchoolStep` 또는 `Principal` 일 때는 제일 하단의 studentID를 입력하지 않아도 된다.
-    - register 버튼을 누르면 회원가입이 완료 된다. 완료 후 [Login here](http://127.0.0.1:5000/login)을 눌러 로그인을 진행한다.
-- **로그인**
-    
-    ![login.html](Report/imgs/Untitled%203.png)
-    
-    login.html
-    
-    - 자신의 Email, Password를 입력해서 로그인을 한다.
-    
-    ![로그인 실패화면](Report/imgs/Untitled%204.png)
-    
-    로그인 실패화면
-    
-    - Email 이나 Password를 잘못 입력하여 로그인에 실패하면 다음과 같은 문구가 나온다.
-
-**로그인 이후**
-
-- dashboard
-    - 로그인이 성공하면 dashboard가 나온다.
-    
-    ![dashboard.html](Report/imgs/Untitled%205.png)
-    
-    dashboard.html
-    
-    - 자신이 로그인한 계정의 username, userrole이 있는 환영문구가 나온다.(이미지의 빨간색 부분 참고)
-    - 자신이 원하는 기능을 메뉴에서 선택해서 들어갈 수 있다.
-    - 제일 하단의 ‘Logout’버튼을 눌러 로그아웃을 할 수 있다.
 
 **메뉴별 설명**
+<br>
 
-- My Information/Child Information
-    
-    ![info.html](Report/imgs/Untitled%206.png)
-    
-    info.html
-    
-    - 자신의 정보와 자신에게 속한 `Student`정보를 확인할 수 있다.
+- **My Information/Child Information**
+
+| 기능                        | 설명                                           | 화면                                            |
+| --------------------------- | ---------------------------------------------- | ----------------------------------------------- |
+| **My/Child Information**     | 자신의 정보와 자신에게 속한 `Student`정보를 확인할 수 있다. |  ![info.html](Report/imgs/Untitled%206.png) |
+
+<br>
+
 - **Board(게시판)**
-    
-    ![board.html(Free Board)](Report/imgs/Untitled%207.png)
-    
-    board.html(Free Board)
-    
-    dashboard에서 Board를 선택하면 board.html로 들어간다.
-    
-    - 글 쓰기
-        
-        ![new_free_board.html](Report/imgs/%25E1%2584%2589%25E1%2585%25B3%25E1%2584%258F%25E1%2585%25B3%25E1%2584%2585%25E1%2585%25B5%25E1%2586%25AB%25E1%2584%2589%25E1%2585%25A3%25E1%2586%25BA_2023-12-08_%25E1%2584%258B%25E1%2585%25A9%25E1%2584%2592%25E1%2585%25AE_4.17.06.png)
-        
-        new_free_board.html
-        
-        Title: 글의 제목
-        
-        Content: 글의 내용
-        
-        위의 내용을 입력후 ‘글쓰기’버튼을 눌러 글쓰기를 완료한다.
-        
-        완료한 이 후 ‘글 목록’을 클릭하여 `Free Board`로 돌아온다.
-        
-    - 글 전체 조회
-        
-        글쓰기를 완료하면
-        
-        ![Untitled](Report/imgs/Untitled%208.png)
-        
-        자신이 쓴 글이 글쓰기 화면에서 보이고 
-        
-        자신이 작성한 글만 삭제할 수 있도록 자신의 작성한 글만 Delete버튼이 보인다.
-        
-    - 글 상세 조회
-        - `Free Board(글 전체 조회)`에서 제목을 클릭하면 해당 게시물의 상세조회가 가능한 페이지로 이동한다.([http://127.0.0.1:5000/post/{post_id}](http://127.0.0.1:5000/post/{post_id}))
-            
-            ![post_detail.html](Report/imgs/Untitled%209.png)
-            
-            post_detail.html
-            
-        - Post Detail에서 글 상세 조회가 가능하다.
-        - Comments에서는 댓글 작성과 조회가 가능한다.
-        - 글 목록을 누르면 `Free Board(글 전체 조회)` 로 이동한다.
-- **MealPlan(식단표 작성 및 조회)**
-    - dashboard에서 Meal Plan을 선택하면 meal.html로 들어간다.
-        
-        ![Untitled](Report/imgs/Untitled%2010.png)
-        
-        Today’s Meal: 오늘의 식단을 확인할 수 있다.
-        
-    - **식단표 작성**
-        
-        ![Untitled](Report/imgs/Untitled%2011.png)
-        
-        Register Meal for Other Dates 에서 식단 등록이 가능하며,
-        
-        식단에 해당하는 날짜, Meal1, Meal2, Snack을 순서대로 선택 후 Register Meal 버튼을 누르면 등록이 완료된다.
-        
-    - **식단표 조회**
-        
-        ![Untitled](Report/imgs/Untitled%2012.png)
-        
-        View Meals for Other Dates에서 조회를 원하는 식단의 날자를 (YYYY-MM-DD)형식으로 입력하고 버튼을 누르면 조회가 된다.
-        
+ 
+| 기능            | 설명               | 화면                                     |
+| ----------------------------- | ----------------------------- | ---------------------------------------- |
+| **기본 화면**    | board.html      | ![board.html(Free Board)](Report/imgs/Untitled%207.png) |
+| **글 쓰기**     | 글 작성 화면       | ![new_free_board.html](Report/imgs/%25E1%2584%2589%25E1%2585%25B3%25E1%2584%258F%25E1%2585%25B3%25E1%2584%2585%25E1%2585%25B5%25E1%2586%25AB%25E1%2584%2589%25E1%2585%25A3%25E1%2586%25BA_2023-12-08_%25E1%2584%258B%25E1%2585%25A9%25E1%2584%2592%25E1%2585%25AE_4.17.06.png) |
+|                |                   | new_free_board.html                      |
+|                |                   | Title: 글의 제목                          |
+|                |                   | Content: 글의 내용                       |
+|                |                   | 위의 내용을 입력 후 ‘글쓰기’버튼을 눌러 글쓰기를 완료한다. |
+|                |                   | 완료한 이 후 ‘글 목록’을 클릭하여 `Free Board`로 돌아온다. |
+| **글 전체 조회** | 전체 글 목록 조회 | ![Untitled](Report/imgs/Untitled%208.png) |
+| **글 상세 조회** | 글 상세 조회 페이지 이동 | ![post_detail.html](Report/imgs/Untitled%209.png) |
+|                |                   | post_detail.html                         |
+|                |                   | - 글 상세 조회 가능                       |
+|                |                   | - Comments에서 댓글 작성과 조회 가능    |
+|                |                   | - 글 목록을 누르면 `Free Board(글 전체 조회)`로 이동한다. |
+
+
+<br>
+
+- **Meal Plan**
+
+| 기능            | 설명               | 화면                                     |
+| ----------------------------- | ----------------------------- | ---------------------------------------- |
+| **오늘의 식단** | 오늘의 식단 확인   | ![Today's Meal](Report/imgs/Untitled%2010.png) |
+| **식단표 작성** | 식단표 작성 화면  | ![Register Meal](Report/imgs/Untitled%2011.png) Register Meal for Other Dates 에서 식단 등록이 가능하며, 식단에 해당하는 날짜, Meal1, Meal2, Snack을 순서대로 선택 후 Register Meal 버튼을 누르면 등록이 완료된다. |
+| **식단표 조회** | 식단표 조회 화면  | ![View Meals](Report/imgs/Untitled%2012.png) View Meals for Other Dates에서 조회를 원하는 식단의 날짜를 (YYYY-MM-DD) 형식으로 입력하고 버튼을 누르면 조회가 된다. |
+
+
+<br>
+
 - **Notification(알림장) - Teacher, Guardian만 접속가능**
-    - **Teacher, Guardian외의 role일 때**
-        
-        ![Untitled](Report/imgs/Untitled%2013.png)
-        
-        화면과 같이 경고문구를 확인할 수 있다.
-        
-    - **Teacher 일 때**
-        
-        dashboard에서 Notification를 선택하면 notification.html로 들어간다.
-        
-        ![notification.html](Report/imgs/Untitled%2014.png)
-        
-        notification.html
-        
-        ‘Write the Notification’ 버튼을 눌러서 [알림장 쓰기 화면](http://127.0.0.1:5000/notification/write)으로 들어간다.
-        
-        - 알림장 쓰기
-            
-            ![write_notification.html](Report/imgs/Untitled%2015.png)
-            
-            write_notification.html
-            
-            Message: 자신이 입력하고 싶은 알림 메세지 입력
-            
-            Select Student: 자신이 알림을 줘야할 학생 선택
-            
-            위의 내용을 입력 후 채팅보내기를 누른다.
-            
-            **채팅 보내기가 성공적**으로 이루어 지면
-            
-            ![Untitled](Report/imgs/Untitled%2016.png)
-            
-            해당 메세지(이미지에 표시)가 나오며
-            
-            다시 알림장 목록으로 돌아가기 위해 알림장 목록을 클릭한다.
-            
-        - 알림장 조회
-            
-            ![Untitled](Report/imgs/Untitled%2017.png)
-            
-            자신이 보낸 알림사항을 조회화면에서 확인할 수 있다.
-            
-            - `Teacher`은 자신에게 속한 모든 학생의 알림사항을 조회 할 수 있다.
-    - **Guardian 일때**
-        - 알림장 조회
-            
-            ![Untitled](Report/imgs/Untitled%2018.png)
-            
-            - `Guardian`은 자신의 `Student`에 대한 알림만 조회할 수 있다.
-        - 알림장 쓰기
-            - `Teacher`과 동일하다.
+
+| User Role                     | 설명                                       | 화면                                                                                   |
+| -----------------------------   | -----------------------------------------------    | -----------------------------------------------------------------------------------------|
+| **Teacher**                     | Notification 선택 시 알림장 작성 및 조회 가능   | ![notification.html](Report/imgs/Untitled%2014.png) <br>  notification.html <br> ![write_notification.html](Report/imgs/Untitled%2015.png) <br> write_notification.html (Message: 자신이 입력하고 싶은 알림 메세지 입력, Select Student: 자신이 알림을 줘야할 학생 선택) 내용을 입력 후 채팅보내기를 누른다. <br> ![Untitled](Report/imgs/Untitled%2016.png) <br> **채팅 보내기가 성공적**으로 이루어질 경우 <br> ![Untitled](Report/imgs/Untitled%2017.png) <br> 자신이 보낸 알림사항을 조회화면에서 확인할 수 있다. Teacher는 자신에게 속한 모든 학생의 알림사항을 조회 할 수 있다. <br> |
+| **Guardian**                    | Notification 선택 시 자신의 학생에 대한 알림 조회 가능  | ![Untitled](Report/imgs/Untitled%2018.png) <br> Guardian은 자신의 Student에 대한 알림만 조회 가능하다. 알림장 쓰기의 경우 Teacher와 동일하다.   |
+| **그 외의 역할일 경우**              | 경고문구 확인이 가능             | ![Untitled](Report/imgs/Untitled%2013.png)                             |
+
+
+<br>
+
 - **Schedule**
-    - 스케쥴 등록
-        
-        ![Untitled](Report/imgs/Untitled%2019.png)
-        
-        등록 성공 시 아래와 같은 화면에서 등록 성공 메세지를 확인할 수 있다.
-        
-        ![Untitled](Report/imgs/Untitled%2020.png)
-        
-    - 스케줄 조회
-        - Guardian
-            
-            자신의 학생에 대한 정보만 확인 가능하다.
-            
-            ![studentid=3에 대한 보호자 화면]Report/imgs/Untitled%2021.png)
-            
-            studentid=3에 대한 보호자 화면
-            
-- Safe School Service(안심 하원 서비스)
-    - **User Role ⇒ Teacher, Principal, OtherSchollStaff**
-        - 모든 학생의 정보 출력
-        
-        ![Teacher, Principal, OtherSchoolStaff의 조회 화면](Report/imgs/Untitled%2022.png)
-        
-        Teacher, Principal, OtherSchoolStaff의 조회 화면
-        
-    - **User Role ⇒ Guardian**
-        - Guardian에 속하는 학생의 하원정보 만이 조회된다.
-        - Guardian 선택 기능
-            
-            Guardian만이 student의 하원 주체를 선택할 수 있다.
-            
-        
-        ![Guardian의 조회화면](Report/imgs/Untitled%2023.png)
-        
-        Guardian의 조회화면
-        
-    - **User Role ⇒ StudentFamily**
-        - StudentFamily에 속하는 학생의 하원 정보만이 조회된다.
-        
-        ![StudentFamily의 조회화면](Report/imgs/Untitled%2024.png)
-        
-        StudentFamily의 조회화면
+
+| 기능                           | 설명                                               | 화면                                                                     |
+| -----------------------------   | -----------------------------------------------    | -----------------------------------------------------------------------------------------|
+| **스케줄 등록**                 | 초기 화면 및 등록 성공 시 메세지 확인             | ![Untitled](Report/imgs/Untitled%2019.png) <br> ![Untitled](Report/imgs/Untitled%2020.png) |
+| **스케줄 조회**                 | Guardian의 경우 자신의 학생에 대한 정보만 확인 가능 | ![Untitled](Report/imgs/Untitled%2021.png) |
+
+<br>
+
+- **안심 하원 서비스**
+
+| User Role                     | 설명                                       | 화면                                                                                   |
+| -----------------------------   | -----------------------------------------------    | -----------------------------------------------------------------------------------------|
+| **Teacher, Principal, OtherSchoolStaff** | 모든 학생의 하원정보 조회                            | ![Teacher, Principal, OtherSchoolStaff의 조회 화면](Report/imgs/Untitled%2022.png)    |
+| **Guardian**                    | Guardian에 속하는 학생의 하원정보 조회 및 선택 가능. Guardian만이 Student의 하원 주체 선택이 가능하다. | ![Guardian의 조회화면](Report/imgs/Untitled%2023.png)      |
+| **StudentFamily**               | StudentFamily에 속하는 학생의 하원 정보만이 조회된다. | ![StudentFamily의 조회화면](Report/imgs/Untitled%2024.png)                             |
+

@@ -83,7 +83,7 @@
         ```sql
         psql -U db2023 -h localhost -d termkk < termkk_backup.sql
         ```
-        
+
 ### 프로그램 실행 방법
 
 - 새 폴더를 생성하고 해당 폴더에 git branch를 열어서 해당 명령어를 입력 한다.
@@ -99,7 +99,7 @@
     python app.py
     ```
     
-    ![실행이 완료된 화면](Report/imgs/Untitled.png){: width="50%"}
+    ![실행이 완료된 화면](Report/imgs/Untitled.png)
     
     실행이 완료된 화면
     
@@ -109,7 +109,7 @@
 
 [https://127.0.0.1:5000/](https://127.0.0.1:5000) 으로 접속하면 아래와 같은 화면이 나온다.
 
-![index.html](Report/imgs/Untitled%201.png){: width="50%"}
+![index.html](Report/imgs/Untitled%201.png)
 
 index.html
 
@@ -119,7 +119,7 @@ index.html
 
 - **회원가입(계정이 없는 경우)**
     
-    ![registering.html](Report/imgs/Untitled%202.png){: width="50%"}
+    ![registering.html](Report/imgs/Untitled%202.png)
     
     registering.html
     
@@ -128,13 +128,13 @@ index.html
     - register 버튼을 누르면 회원가입이 완료 된다. 완료 후 [Login here](http://127.0.0.1:5000/login)을 눌러 로그인을 진행한다.
 - **로그인**
     
-    ![login.html](Report/imgs/Untitled%203.png){: width="50%"}
+    ![login.html](Report/imgs/Untitled%203.png)
     
     login.html
     
     - 자신의 Email, Password를 입력해서 로그인을 한다.
     
-    ![로그인 실패화면](Report/imgs/Untitled%204.png){: width="50%"}
+    ![로그인 실패화면](Report/imgs/Untitled%204.png)
     
     로그인 실패화면
     
@@ -145,7 +145,7 @@ index.html
 - dashboard
     - 로그인이 성공하면 dashboard가 나온다.
     
-    ![dashboard.html](Report/imgs/Untitled%205.png){: width="50%"}
+    ![dashboard.html](Report/imgs/Untitled%205.png)
     
     dashboard.html
     
@@ -157,14 +157,14 @@ index.html
 
 - My Information/Child Information
     
-    ![info.html](Report/imgs/Untitled%206.png){: width="50%"}
+    ![info.html](Report/imgs/Untitled%206.png)
     
     info.html
     
     - 자신의 정보와 자신에게 속한 `Student`정보를 확인할 수 있다.
 - **Board(게시판)**
     
-    ![board.html(Free Board)](Report/imgs/Untitled%207.png){: width="50%"}
+    ![board.html(Free Board)](Report/imgs/Untitled%207.png)
     
     board.html(Free Board)
     
@@ -172,7 +172,7 @@ index.html
     
     - 글 쓰기
         
-        ![new_free_board.html](Report/imgs/%25E1%2584%2589%25E1%2585%25B3%25E1%2584%258F%25E1%2585%25B3%25E1%2584%2585%25E1%2585%25B5%25E1%2586%25AB%25E1%2584%2589%25E1%2585%25A3%25E1%2586%25BA_2023-12-08_%25E1%2584%258B%25E1%2585%25A9%25E1%2584%2592%25E1%2585%25AE_4.17.06.png){: width="50%"}
+        ![new_free_board.html](Report/imgs/%25E1%2584%2589%25E1%2585%25B3%25E1%2584%258F%25E1%2585%25B3%25E1%2584%2585%25E1%2585%25B5%25E1%2586%25AB%25E1%2584%2589%25E1%2585%25A3%25E1%2586%25BA_2023-12-08_%25E1%2584%258B%25E1%2585%25A9%25E1%2584%2592%25E1%2585%25AE_4.17.06.png)
         
         new_free_board.html
         
@@ -188,7 +188,7 @@ index.html
         
         글쓰기를 완료하면
         
-        ![Untitled](Report/imgs/Untitled%208.png){: width="50%"}
+        ![Untitled](Report/imgs/Untitled%208.png)
         
         자신이 쓴 글이 글쓰기 화면에서 보이고 
         
@@ -197,7 +197,7 @@ index.html
     - 글 상세 조회
         - `Free Board(글 전체 조회)`에서 제목을 클릭하면 해당 게시물의 상세조회가 가능한 페이지로 이동한다.([http://127.0.0.1:5000/post/{post_id}](http://127.0.0.1:5000/post/{post_id}))
             
-            ![post_detail.html](Report/imgs/Untitled%209.png){: width="50%"}
+            ![post_detail.html](Report/imgs/Untitled%209.png)
             
             post_detail.html
             
@@ -207,13 +207,13 @@ index.html
 - **MealPlan(식단표 작성 및 조회)**
     - dashboard에서 Meal Plan을 선택하면 meal.html로 들어간다.
         
-        ![Untitled](Report/imgs/Untitled%2010.png){: width="50%"}
+        ![Untitled](Report/imgs/Untitled%2010.png)
         
         Today’s Meal: 오늘의 식단을 확인할 수 있다.
         
     - **식단표 작성**
         
-        ![Untitled](Report/imgs/Untitled%2011.png){: width="50%"}
+        ![Untitled](Report/imgs/Untitled%2011.png)
         
         Register Meal for Other Dates 에서 식단 등록이 가능하며,
         
@@ -221,14 +221,14 @@ index.html
         
     - **식단표 조회**
         
-        ![Untitled](Report/imgs/Untitled%2012.png){: width="50%"}
+        ![Untitled](Report/imgs/Untitled%2012.png)
         
         View Meals for Other Dates에서 조회를 원하는 식단의 날자를 (YYYY-MM-DD)형식으로 입력하고 버튼을 누르면 조회가 된다.
         
 - **Notification(알림장) - Teacher, Guardian만 접속가능**
     - **Teacher, Guardian외의 role일 때**
         
-        ![Untitled](Report/imgs/Untitled%2013.png){: width="50%"}
+        ![Untitled](Report/imgs/Untitled%2013.png)
         
         화면과 같이 경고문구를 확인할 수 있다.
         
@@ -236,7 +236,7 @@ index.html
         
         dashboard에서 Notification를 선택하면 notification.html로 들어간다.
         
-        ![notification.html](Report/imgs/Untitled%2014.png){: width="50%"}
+        ![notification.html](Report/imgs/Untitled%2014.png)
         
         notification.html
         
@@ -244,7 +244,7 @@ index.html
         
         - 알림장 쓰기
             
-            ![write_notification.html](Report/imgs/Untitled%2015.png){: width="50%"}
+            ![write_notification.html](Report/imgs/Untitled%2015.png)
             
             write_notification.html
             
@@ -256,7 +256,7 @@ index.html
             
             **채팅 보내기가 성공적**으로 이루어 지면
             
-            ![Untitled](Report/imgs/Untitled%2016.png){: width="50%"}
+            ![Untitled](Report/imgs/Untitled%2016.png)
             
             해당 메세지(이미지에 표시)가 나오며
             
@@ -264,7 +264,7 @@ index.html
             
         - 알림장 조회
             
-            ![Untitled](Report/imgs/Untitled%2017.png){: width="50%"}
+            ![Untitled](Report/imgs/Untitled%2017.png)
             
             자신이 보낸 알림사항을 조회화면에서 확인할 수 있다.
             
@@ -272,7 +272,7 @@ index.html
     - **Guardian 일때**
         - 알림장 조회
             
-            ![Untitled](Report/imgs/Untitled%2018.png){: width="50%"}
+            ![Untitled](Report/imgs/Untitled%2018.png)
             
             - `Guardian`은 자신의 `Student`에 대한 알림만 조회할 수 있다.
         - 알림장 쓰기
@@ -280,18 +280,18 @@ index.html
 - **Schedule**
     - 스케쥴 등록
         
-        ![Untitled](Report/imgs/Untitled%2019.png){: width="50%"}
+        ![Untitled](Report/imgs/Untitled%2019.png)
         
         등록 성공 시 아래와 같은 화면에서 등록 성공 메세지를 확인할 수 있다.
         
-        ![Untitled](Report/imgs/Untitled%2020.png){: width="50%"}
+        ![Untitled](Report/imgs/Untitled%2020.png)
         
     - 스케줄 조회
         - Guardian
             
             자신의 학생에 대한 정보만 확인 가능하다.
             
-            ![studentid=3에 대한 보호자 화면]Report/imgs/Untitled%2021.png){: width="50%"}
+            ![studentid=3에 대한 보호자 화면]Report/imgs/Untitled%2021.png)
             
             studentid=3에 대한 보호자 화면
             
@@ -299,7 +299,7 @@ index.html
     - **User Role ⇒ Teacher, Principal, OtherSchollStaff**
         - 모든 학생의 정보 출력
         
-        ![Teacher, Principal, OtherSchoolStaff의 조회 화면](Report/imgs/Untitled%2022.png){: width="50%"}
+        ![Teacher, Principal, OtherSchoolStaff의 조회 화면](Report/imgs/Untitled%2022.png)
         
         Teacher, Principal, OtherSchoolStaff의 조회 화면
         
@@ -310,14 +310,13 @@ index.html
             Guardian만이 student의 하원 주체를 선택할 수 있다.
             
         
-        ![Guardian의 조회화면](Report/imgs/Untitled%2023.png){: width="50%"}
+        ![Guardian의 조회화면](Report/imgs/Untitled%2023.png)
         
         Guardian의 조회화면
         
     - **User Role ⇒ StudentFamily**
         - StudentFamily에 속하는 학생의 하원 정보만이 조회된다.
         
-        ![StudentFamily의 조회화면](Report/imgs/Untitled%2024.png){: width="50%"}
+        ![StudentFamily의 조회화면](Report/imgs/Untitled%2024.png)
         
         StudentFamily의 조회화면
-

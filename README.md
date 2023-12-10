@@ -126,7 +126,6 @@
 | **로그아웃**     | 로그아웃 버튼     | 하단의 ‘Logout’버튼을 눌러 로그아웃을 할 수 있다.                                            |
 
 
-**메뉴별 설명**
 <br>
 
 - **My Information/Child Information**

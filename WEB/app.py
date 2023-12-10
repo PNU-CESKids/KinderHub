@@ -93,7 +93,10 @@ def view_board():
 
     posts = view_free_board(conn)  # Pass conn to view_free_board
 
-    return render_template('board.html', posts=posts)
+    # userid넘겨 주기
+    if 'user_id' in session:
+        user_id = session['user_id']
+    return render_template('board.html', posts=posts, user_id=user_id)
 
 
 # 게시물 상세보기

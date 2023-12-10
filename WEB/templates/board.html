@@ -89,11 +89,12 @@
         {% for post in posts %}
             <li style="margin-bottom: 30px; display: flex; justify-content: space-between; width: 100%;">
                 <p><a href="{{ url_for('view_post_route', post_id=post[0]) }}">{{ post[0] }}. {{ post[1] }}</a></p>
-
-                <form method="post" action="{{ url_for('delete_post') }}">
-                    <input type="hidden" name="post_id" value="{{ post[0] }}">
-                    <button type="submit">Delete</button>
-                </form>
+                {%if user_id == post[2] %}
+                    <form method="post" action="{{ url_for('delete_post') }}">
+                        <input type="hidden" name="post_id" value="{{ post[0] }}">
+                        <button type="submit">Delete</button>
+                    </form>
+                {%endif%}
             </li>
         {% endfor %}
     </ul>

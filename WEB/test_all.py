@@ -418,7 +418,7 @@ def write_post_comment(con, conn, post_id, commenter_id, comment_content):
 # 자유게시판 보기 함수
 def view_free_board(conn):
     try:
-        query = "SELECT PostID, Title FROM FreeBoardQA;"
+        query = "SELECT PostID, Title, PosterID FROM FreeBoardQA;"
         conn.execute(query)
         result = conn.fetchall()
         return result

@@ -83,6 +83,7 @@
         ```sql
         psql -U db2023 -h localhost -d termkk < termkk_backup.sql
         ```
+<br>
 
 ### 프로그램 실행 방법
 
@@ -104,6 +105,7 @@
     실행이 완료된 화면
     
 - Chrome에서 [http://127.0.0.1:5000/](http://127.0.0.1:5000/) 으로 이동한다.
+<br>
 
 ### 기능별 실행 방법
 

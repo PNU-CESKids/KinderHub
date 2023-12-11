@@ -304,5 +304,6 @@ CREATE TABLE guardianselection (
 
 - **ER 다이어그램**
 
+![ERdiagram](https://github.com/PNU-CESKids/KinderHub/assets/98088494/c6b13c36-1e1c-45b6-828f-86cde40331b5)
 
 

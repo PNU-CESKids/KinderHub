@@ -212,92 +212,150 @@
 - **데이터베이스 스키마**
 
 ```
-CREATE TABLE users (
-    userid SERIAL PRIMARY KEY,
-    username VARCHAR(20),
-    userrole role_enum,
-    studentid INTEGER,
-    userpassword VARCHAR(255),
-    useremail VARCHAR(255),
-    teacherid INTEGER,
-    CONSTRAINT valid_userrole CHECK (userrole IN ('Principal', 'Teacher', 'Student', 'Guardian', 'OtherSchoolStaff', 'StudentsFamily')),
-    FOREIGN KEY (studentid) REFERENCES student(studentid),
-    FOREIGN KEY (teacherid) REFERENCES users(userid)
-);
+                                         Table "public.users"
+    Column    |          Type          | Collation | Nullable |                Default                
+--------------+------------------------+-----------+----------+---------------------------------------
+ userid       | integer                |           | not null | nextval('users_userid_seq'::regclass)
+ username     | character varying(20)  |           |          | 
+ userrole     | role_enum              |           |          | 
+ studentid    | integer                |           |          | 
+ userpassword | character varying(255) |           |          | 
+ useremail    | character varying(255) |           |          | 
+ teacherid    | integer                |           |          | 
+Indexes:
+    "users_pkey" PRIMARY KEY, btree (userid)
+Check constraints:
+    "valid_userrole" CHECK (userrole = ANY (ARRAY['Principal'::role_enum, 'Teacher'::role_enum, 'Student'::role_enum, 'Guardian'::role_enum, 'OtherSchoolStaff'::role_enum, 'StudentsFamily'::role_enum]))
+Foreign-key constraints:
+    "users_studentid_fkey" FOREIGN KEY (studentid) REFERENCES student(studentid)
+    "users_teacherid_fkey" FOREIGN KEY (teacherid) REFERENCES users(userid)
+Referenced by:
+    TABLE "comment" CONSTRAINT "comment_commenterid_fkey" FOREIGN KEY (commenterid) REFERENCES users(userid)
+    TABLE "student" CONSTRAINT "fk_teacher" FOREIGN KEY (teacherid) REFERENCES users(userid)
+    TABLE "freeboardqa" CONSTRAINT "freeboardqa_posterid_fkey" FOREIGN KEY (posterid) REFERENCES users(userid)
+    TABLE "guardianselection" CONSTRAINT "guardianselection_guardianid_fkey" FOREIGN KEY (guardianid) REFERENCES users(userid)
+    TABLE "student" CONSTRAINT "student_teacherid_fkey" FOREIGN KEY (teacherid) REFERENCES users(userid)
+    TABLE "users" CONSTRAINT "users_teacherid_fkey" FOREIGN KEY (teacherid) REFERENCES users(userid)
 
-CREATE TABLE student (
-    studentid SERIAL PRIMARY KEY,
-    studentname VARCHAR(20),
-    classname CHAR(1),
-    birthdate DATE,
-    attendance INTEGER,
-    healthstatus BOOLEAN,
-    address VARCHAR(100),
-    teacherid INTEGER,
-    FOREIGN KEY (teacherid) REFERENCES users(userid)
-);
 
-CREATE TABLE freeboardqa (
-    postid SERIAL PRIMARY KEY,
-    posterid INTEGER,
-    title VARCHAR(100),
-    content TEXT,
-    timestamp TIMESTAMP,
-    image BYTEA,
-    FOREIGN KEY (posterid) REFERENCES users(userid)
-);
+                                          Table "public.student"
+    Column    |          Type          | Collation | Nullable |                  Default                   
+--------------+------------------------+-----------+----------+--------------------------------------------
+ studentid    | integer                |           | not null | nextval('student_studentid_seq'::regclass)
+ studentname  | character varying(20)  |           |          | 
+ classname    | character(1)           |           |          | 
+ birthdate    | date                   |           |          | 
+ attendance   | integer                |           |          | 
+ healthstatus | boolean                |           |          | 
+ address      | character varying(100) |           |          | 
+ teacherid    | integer                |           |          | 
+Indexes:
+    "student_pkey" PRIMARY KEY, btree (studentid)
+Foreign-key constraints:
+    "fk_teacher" FOREIGN KEY (teacherid) REFERENCES users(userid)
+    "student_teacherid_fkey" FOREIGN KEY (teacherid) REFERENCES users(userid)
+Referenced by:
+    TABLE "guardianselection" CONSTRAINT "guardianselection_studentid_fkey" FOREIGN KEY (studentid) REFERENCES student(studentid)
+    TABLE "schedulestudent" CONSTRAINT "schedulestudent_studentid_fkey" FOREIGN KEY (studentid) REFERENCES student(studentid)
+    TABLE "users" CONSTRAINT "users_studentid_fkey" FOREIGN KEY (studentid) REFERENCES student(studentid)
 
-CREATE TABLE comment (
-    commentid SERIAL PRIMARY KEY,
-    postid INTEGER,
-    commenterid INTEGER,
-    commentcontent TEXT,
-    timestamp TIMESTAMP,
-    FOREIGN KEY (postid) REFERENCES freeboardqa(postid) ON DELETE CASCADE,
-    FOREIGN KEY (commenterid) REFERENCES users(userid)
-);
 
-CREATE TABLE mealplan (
-    planid SERIAL PRIMARY KEY,
-    date DATE,
-    meal1 TEXT,
-    meal2 TEXT,
-    snack TEXT
-);
+                                          Table "public.freeboardqa"
+  Column   |            Type             | Collation | Nullable |                   Default                   
+-----------+-----------------------------+-----------+----------+---------------------------------------------
+ postid    | integer                     |           | not null | nextval('freeboardqa_postid_seq'::regclass)
+ posterid  | integer                     |           |          | 
+ title     | character varying(100)      |           |          | 
+ content   | text                        |           |          | 
+ timestamp | timestamp without time zone |           |          | 
+ image     | bytea                       |           |          | 
+Indexes:
+    "freeboardqa_pkey" PRIMARY KEY, btree (postid)
+Foreign-key constraints:
+    "freeboardqa_posterid_fkey" FOREIGN KEY (posterid) REFERENCES users(userid)
+Referenced by:
+    TABLE "comment" CONSTRAINT "comment_postid_fkey" FOREIGN KEY (postid) REFERENCES freeboardqa(postid) ON DELETE CASCADE
 
-CREATE TABLE schedule (
-    scheduleid SERIAL PRIMARY KEY,
-    eventtype VARCHAR(200),
-    date DATE,
-    time TIME,
-    description TEXT,
-    scheduleimg BYTEA
-);
 
-CREATE TABLE schedulestudent (
-    scheduleid INTEGER NOT NULL,
-    studentid INTEGER NOT NULL,
-    PRIMARY KEY (scheduleid, studentid),
-    FOREIGN KEY (scheduleid) REFERENCES schedule(scheduleid),
-    FOREIGN KEY (studentid) REFERENCES student(studentid)
-);
+                                              Table "public.comment"
+     Column     |            Type             | Collation | Nullable |                  Default                   
+----------------+-----------------------------+-----------+----------+--------------------------------------------
+ commentid      | integer                     |           | not null | nextval('comment_commentid_seq'::regclass)
+ postid         | integer                     |           |          | 
+ commenterid    | integer                     |           |          | 
+ commentcontent | text                        |           |          | 
+ timestamp      | timestamp without time zone |           |          | 
+Indexes:
+    "comment_pkey" PRIMARY KEY, btree (commentid)
+Foreign-key constraints:
+    "comment_commenterid_fkey" FOREIGN KEY (commenterid) REFERENCES users(userid)
+    "comment_postid_fkey" FOREIGN KEY (postid) REFERENCES freeboardqa(postid) ON DELETE CASCADE
 
-CREATE TABLE chat (
-    chatid SERIAL PRIMARY KEY,
-    senderid INTEGER,
-    receiverid INTEGER,
-    message TEXT,
-    timestamp TIMESTAMP,
-    image BYTEA
-);
 
-CREATE TABLE guardianselection (
-    selectionid SERIAL PRIMARY KEY,
-    guardianid INTEGER,
-    studentid INTEGER,
-    FOREIGN KEY (guardianid) REFERENCES users(userid),
-    FOREIGN KEY (studentid) REFERENCES student(studentid)
-);
+                              Table "public.mealplan"
+ Column |  Type   | Collation | Nullable |                 Default                  
+--------+---------+-----------+----------+------------------------------------------
+ planid | integer |           | not null | nextval('mealplan_planid_seq'::regclass)
+ date   | date    |           |          | 
+ meal1  | text    |           |          | 
+ meal2  | text    |           |          | 
+ snack  | text    |           |          | 
+Indexes:
+    "mealplan_pkey" PRIMARY KEY, btree (planid)
+
+
+                                          Table "public.schedule"
+   Column    |          Type          | Collation | Nullable |                   Default                    
+-------------+------------------------+-----------+----------+----------------------------------------------
+ scheduleid  | integer                |           | not null | nextval('schedule_scheduleid_seq'::regclass)
+ eventtype   | character varying(200) |           |          | 
+ date        | date                   |           |          | 
+ time        | time without time zone |           |          | 
+ description | text                   |           |          | 
+ scheduleimg | bytea                  |           |          | 
+Indexes:
+    "schedule_pkey" PRIMARY KEY, btree (scheduleid)
+Referenced by:
+    TABLE "schedulestudent" CONSTRAINT "schedulestudent_scheduleid_fkey" FOREIGN KEY (scheduleid) REFERENCES schedule(scheduleid)
+
+
+            Table "public.schedulestudent"
+   Column   |  Type   | Collation | Nullable | Default 
+------------+---------+-----------+----------+---------
+ scheduleid | integer |           | not null | 
+ studentid  | integer |           | not null | 
+Indexes:
+    "schedulestudent_pkey" PRIMARY KEY, btree (scheduleid, studentid)
+Foreign-key constraints:
+    "schedulestudent_scheduleid_fkey" FOREIGN KEY (scheduleid) REFERENCES schedule(scheduleid)
+    "schedulestudent_studentid_fkey" FOREIGN KEY (studentid) REFERENCES student(studentid)
+
+
+                                          Table "public.chat"
+   Column   |            Type             | Collation | Nullable |               Default                
+------------+-----------------------------+-----------+----------+--------------------------------------
+ chatid     | integer                     |           | not null | nextval('chat_chatid_seq'::regclass)
+ senderid   | integer                     |           |          | 
+ receiverid | integer                     |           |          | 
+ message    | text                        |           |          | 
+ timestamp  | timestamp without time zone |           |          | 
+ image      | bytea                       |           |          | 
+Indexes:
+    "chat_pkey" PRIMARY KEY, btree (chatid)
+
+
+                                   Table "public.guardianselection"
+   Column    |  Type   | Collation | Nullable |                        Default                         
+-------------+---------+-----------+----------+--------------------------------------------------------
+ selectionid | integer |           | not null | nextval('guardianselection_selectionid_seq'::regclass)
+ guardianid  | integer |           |          | 
+ studentid   | integer |           |          | 
+Indexes:
+    "guardianselection_pkey" PRIMARY KEY, btree (selectionid)
+Foreign-key constraints:
+    "guardianselection_guardianid_fkey" FOREIGN KEY (guardianid) REFERENCES users(userid)
+    "guardianselection_studentid_fkey" FOREIGN KEY (studentid) REFERENCES student(studentid)
+
 ```
 
 <br> 

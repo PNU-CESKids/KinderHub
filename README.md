@@ -23,7 +23,6 @@
 | 이름 | 김윤하(https://github.com/xdbsgk) | 구지원(https://github.com/kUZEEwon) |
 |:------:|:----------:|:----------:|
 |  | <img src="https://github.com/xdbsgk.png" width="200"> | <img src="https://github.com/kUZEEwon.png" width="200"> |
-| 개발 내용 |  |  |
 
 
 ## 파일 구조

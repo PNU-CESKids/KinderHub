@@ -205,3 +205,104 @@
 | **Guardian**                    | Guardian에 속하는 학생의 하원정보 조회 및 선택 가능. Guardian만이 Student의 하원 주체 선택이 가능하다. | ![Guardian의 조회화면](Report/imgs/Untitled%2023.png)      |
 | **StudentFamily**               | StudentFamily에 속하는 학생의 하원 정보만이 조회된다. | ![StudentFamily의 조회화면](Report/imgs/Untitled%2024.png)                             |
 
+<br>
+
+## 데이터베이스 스키마 및 다이어그램 (Database schema / Schema diagram)
+
+- **데이터베이스 스키마**
+
+```
+CREATE TABLE users (
+    userid SERIAL PRIMARY KEY,
+    username VARCHAR(20),
+    userrole role_enum,
+    studentid INTEGER,
+    userpassword VARCHAR(255),
+    useremail VARCHAR(255),
+    teacherid INTEGER,
+    CONSTRAINT valid_userrole CHECK (userrole IN ('Principal', 'Teacher', 'Student', 'Guardian', 'OtherSchoolStaff', 'StudentsFamily')),
+    FOREIGN KEY (studentid) REFERENCES student(studentid),
+    FOREIGN KEY (teacherid) REFERENCES users(userid)
+);
+
+CREATE TABLE student (
+    studentid SERIAL PRIMARY KEY,
+    studentname VARCHAR(20),
+    classname CHAR(1),
+    birthdate DATE,
+    attendance INTEGER,
+    healthstatus BOOLEAN,
+    address VARCHAR(100),
+    teacherid INTEGER,
+    FOREIGN KEY (teacherid) REFERENCES users(userid)
+);
+
+CREATE TABLE freeboardqa (
+    postid SERIAL PRIMARY KEY,
+    posterid INTEGER,
+    title VARCHAR(100),
+    content TEXT,
+    timestamp TIMESTAMP,
+    image BYTEA,
+    FOREIGN KEY (posterid) REFERENCES users(userid)
+);
+
+CREATE TABLE comment (
+    commentid SERIAL PRIMARY KEY,
+    postid INTEGER,
+    commenterid INTEGER,
+    commentcontent TEXT,
+    timestamp TIMESTAMP,
+    FOREIGN KEY (postid) REFERENCES freeboardqa(postid) ON DELETE CASCADE,
+    FOREIGN KEY (commenterid) REFERENCES users(userid)
+);
+
+CREATE TABLE mealplan (
+    planid SERIAL PRIMARY KEY,
+    date DATE,
+    meal1 TEXT,
+    meal2 TEXT,
+    snack TEXT
+);
+
+CREATE TABLE schedule (
+    scheduleid SERIAL PRIMARY KEY,
+    eventtype VARCHAR(200),
+    date DATE,
+    time TIME,
+    description TEXT,
+    scheduleimg BYTEA
+);
+
+CREATE TABLE schedulestudent (
+    scheduleid INTEGER NOT NULL,
+    studentid INTEGER NOT NULL,
+    PRIMARY KEY (scheduleid, studentid),
+    FOREIGN KEY (scheduleid) REFERENCES schedule(scheduleid),
+    FOREIGN KEY (studentid) REFERENCES student(studentid)
+);
+
+CREATE TABLE chat (
+    chatid SERIAL PRIMARY KEY,
+    senderid INTEGER,
+    receiverid INTEGER,
+    message TEXT,
+    timestamp TIMESTAMP,
+    image BYTEA
+);
+
+CREATE TABLE guardianselection (
+    selectionid SERIAL PRIMARY KEY,
+    guardianid INTEGER,
+    studentid INTEGER,
+    FOREIGN KEY (guardianid) REFERENCES users(userid),
+    FOREIGN KEY (studentid) REFERENCES student(studentid)
+);
+```
+
+<br> 
+
+- **ER 다이어그램**
+
+
+
